@@ -17,7 +17,7 @@ A decentralized verification protocol based on visual media of the actual goods.
 2. A transaction is created with the item metadata. Is broadcasted to the network.
 3. In a manual verification system, other nodes verify the authenticity of the item based on the proofs provided.
 4. If the authenticity of the product is valid, an NFT symbolizing the authenticity of the physical product is minted and sent to the node address.
-5. If the physical item is traded between system participants, the buyer must claim the linked NFT once the item has been received.
+5. If the physical item is traded between system participants, the NFT changes it's ownership to the buyer.
 
 ### The Rules
 
