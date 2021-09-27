@@ -25,6 +25,6 @@ A decentralized verification protocol based on visual media of the actual goods.
 2. Each node can validate a set of items in exchange for validation credits.
 3. Validators are divided into categories. To become a validator for a specific category, the node must pass a test proving domain knowledge.
 4. A specific number of validations is required to ensure the authenticity of an item (depending on the actual value of the item, more validations may be required).
-5. If the physical item is traded within the system, a unique key generated from the seller's address is sent to the buyer proving item ownership.
+5. If the physical item is traded within the system, a unique key generated from the seller's address is sent to the buyer in order to prove item reception and ownership.
 6. Ownership is represented with a score, being the maximum score the day where the NFT was sent to the node address. This score decreases over time. Recent media of the item resets the ownership score to the maximum value.
 
