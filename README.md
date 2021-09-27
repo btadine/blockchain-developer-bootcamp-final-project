@@ -13,7 +13,7 @@ A decentralized verification protocol based on visual media of the actual goods.
 
 ### The Workflow
 
-1. A node uploads a "media proof set" to prove authenticity and ownership of a physical collectible product.
+1. A node uploads a "media proof set" to prove authenticity (and ownership) of a physical collectible product.
 2. A transaction is created with the item metadata. Is broadcasted to the network.
 3. In a manual verification system, other nodes verify the authenticity of the item based on the proofs provided.
 4. If the authenticity of the product is valid, an NFT symbolizing the authenticity of the physical product is minted and sent to the node address.
