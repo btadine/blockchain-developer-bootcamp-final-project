@@ -1,17 +1,17 @@
 # blockchain-developer-bootcamp-final-project
 Final Project of Consensys Ethereum Bootcamp
 
-##Physical Collectable Verification System
+## Physical Collectable Verification System
 
-###The Problem
+### The Problem
 
 Physical collectors find it difficult to acquire authentic items with relative scarcity at online markets. Counterfeit products are common in rare and expensive item categories. Either the customer is well versed in the verification of the specific goods or may incur a high risk of getting a non-authentic item  (or a different item) for their money.
 
-###The Solution
+### The Solution
 
 A decentralized verification protocol based on visual media of the actual goods. The idea is to take photos or videos of your item and let the community (users represented as nodes) decide if the goods are authentic or not. 
 
-###The Workflow
+### The Workflow
 
 1. A node uploads a "media proof set" to prove authenticity and ownership of a physical collectable product.
 2. A transaction is created with the item metadata. Is broadcasted to the network.
@@ -19,7 +19,7 @@ A decentralized verification protocol based on visual media of the actual goods.
 4. If the authenticity of the product is valid, an NFT symbolizing the authenticity of the physical product is minted and sent to the node address.
 5. If the physical item is traded between system participants, the buyer must claim the linked NFT once the item has been received.
 
-###The Rules
+### The Rules
 
 1. A node cannot validate the authenticity of its items.
 2. Each node can validate a set of items in exchange for validation credits.
