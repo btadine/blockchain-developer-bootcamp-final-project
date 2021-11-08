@@ -16,7 +16,7 @@ A decentralized city-based feed of suggestions categorized by type.
 1. A user creates a new suggestion (AKA "City hack") indicating a city and a category.
 2. When posted, the suggestion leads to a transaction with the smart contract where the suggestion id is stored. The model is stored in IPFS.
 3. Each time a new suggestion is created, an event is emitted.
-4. The suggestions feed is refreshed with the new suggestion. The frontend filters suggestions analyzing all the events to date emitted by the SC.
+4. The frontend filters suggestions analyzing all the events to date emitted by the SC. The suggestions feed is refreshed with the new suggestion. 
 5. A user can upvote or downvote a suggestion, which costs gas as a way to prevent spam.
 6. A user can tip a poster to the original address used for the suggestion creation.
 7. When a tip is made, an event with the address of the donator is emitted.
