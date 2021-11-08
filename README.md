@@ -9,7 +9,7 @@ When visiting a new city for pleasure or work, it's highly likely to end up in t
 
 ### The Solution
 
-A decentralized city-based feed of anonymous suggestions categorized by type.
+A decentralized city-based feed of suggestions categorized by type.
 
 ### The Workflow
 
