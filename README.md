@@ -1,7 +1,7 @@
 # blockchain-developer-bootcamp-final-project
 Final Project of Consensys Ethereum Bootcamp
 
-## -Cityhacks- a decentralized city-based suggestion feed 
+## Cityhacks: A decentralized city-based suggestion feed 
 
 ### The Problem
 
