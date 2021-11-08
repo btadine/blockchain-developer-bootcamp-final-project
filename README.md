@@ -1,30 +1,29 @@
 # blockchain-developer-bootcamp-final-project
 Final Project of Consensys Ethereum Bootcamp
 
-## Physical Collectible Verification System
+## City-based suggestions decentralized feed (AKA "Cityhacks")
 
 ### The Problem
 
-Physical collectors find it difficult to acquire authentic items with relative scarcity at online markets. Counterfeit products are common in rare and expensive item categories. Either the customer is well versed in the verification of the specific goods or may incur a high risk of getting a non-authentic item (or a different item) for their money.
+When visiting a new city for pleasure or work, it's highly likely to end up in the most touristical places. Even if staying longer, most people need a phase of adaptation where they find where the good things happen or are located. The average person is likely to reproduce a very touristic trip in a span of a few days, not enjoying the good things only local people are aware of. In opposition, locals and reallocated persons know the cheapest place to take a good beer, the quieter spot in the city with amazing views, or the cofee place where you can work for free.
 
 ### The Solution
 
-A decentralized verification protocol based on visual media of the actual goods. The idea is to take photos or videos of your item and let the community (users represented as nodes) decide if the goods are authentic or not.
+A decentralized city-based feed of anonymous suggestions categorized by type.
 
 ### The Workflow
 
-1. A node uploads a "media proof set" to prove authenticity (and ownership) of a physical collectible product.
-2. A transaction is created with the item metadata. Is broadcasted to the network.
-3. In a manual verification system, other nodes verify the authenticity of the item based on the proofs provided.
-4. If the authenticity of the product is valid, an NFT symbolizing the authenticity of the physical product is minted and sent to the node address.
-5. If the physical item is traded between system participants, the NFT is transferred to the new owner's address.
+1. A user creates a new suggestion (AKA "City hack") indicating a city and a category.
+2. When posted, the suggestion leads to a transaction with the smart contract where the suggestion id is stored. The model is stored in IPFS.
+3. Each time a new suggestion is created, an event is emitted.
+4. The suggestions feed is refreshed with the new suggestion. The frontend filters suggestions analyzing all the events to date emitted by the SC.
+5. A user can upvote or downvote a suggestion, which costs gas as a way to prevent spam.
+6. A user can tip a poster to the original address used for the suggestion creation.
+7. When a tip is made, an event with the address of the donator is emitted.
+8. Hex/ENS addresses of donors are shown inside of the suggestion.
 
 ### The Rules
+1. The original poster address can't vote his own suggestion.
+2. The same address can't vote twice for a suggestion.
 
-1. A node cannot validate the authenticity of its items.
-2. Each node can validate a set of items in exchange for validation credits.
-3. Validators are divided into categories. To become a validator for a specific category, the node must pass a test proving domain knowledge.
-4. A specific number of validations is required to ensure the authenticity of an item (depending on the actual value of the item, more validations may be required).
-5. If the physical item is traded within the system, a unique key generated from the seller's address is sent phisically with the item in order to prove item reception and ownership from the buyer side.
-6. Ownership is represented with a score, being the maximum score the day where the NFT was sent to the node address. This score decreases over time. Recent media of the item resets the ownership score to the maximum value.
 
