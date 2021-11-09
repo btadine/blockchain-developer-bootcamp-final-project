@@ -8,11 +8,11 @@
 
 ## Functions
 #### func post suggestion(category Category, city City, description, String)
-// require limit of suggestions in time to avoid spam
-// require description to be 280 characters max (Twitter standard)
-// require city and category to exist
-// add suggestion under a mapping of mappings -> [City: [Categories : Suggestions]]. Maybe add Categories as key since they don't change.
-// emit newSuggestion event
+###### // require limit of suggestions in time to avoid spam
+###### // require description to be 280 characters max (Twitter standard)
+###### // require city and category to exist
+###### // add suggestion under a mapping of mappings -> [City: [Categories : Suggestions]]. Maybe add Categories as key since they don't change.
+###### // emit newSuggestion event
 
 #### func delete suggestion(suggestionid Int)
 // require sender address to match poster address 
