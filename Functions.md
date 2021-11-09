@@ -1,10 +1,10 @@
 # Pseudocode events/functions of the contract
 
 ## Events
-#### event newSuggestion(city: indexed City, category: indexed Category, poster: indexed Address, id: Int)
-#### event suggestionDeleted(id: Int)
-#### event suggestionVoted(id: Int, voter: Address)
-#### event suggestionTipped(id Int, donor: Address)
+- event newSuggestion(city: indexed City, category: indexed Category, poster: indexed Address, id: Int)
+- event suggestionDeleted(id: Int)
+- event suggestionVoted(id: Int, voter: Address)
+- event suggestionTipped(id Int, donor: Address)
 
 ## Functions
 #### func post suggestion(category Category, city City, description, String)
