@@ -10,5 +10,5 @@
 #### func post suggestion
 #### func delete suggestion
 #### func vote suggestion (bool)
-#### func tip poster (tipAmount)
+#### func tip poster (tipAmount) payable
 
