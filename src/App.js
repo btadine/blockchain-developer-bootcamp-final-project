@@ -121,7 +121,9 @@ const renderNetworkDetector = () => (
             timestamp: new Date(hack.timestamp * 1000),
             description: hack.description,
             city: cities[hack.cityId.toNumber()],
-            category: categories[hack.categoryId.toNumber()]
+            category: categories[hack.categoryId.toNumber()],
+            upVotes: 0,
+            downVotes: 0
           });
         });
 
@@ -177,6 +179,10 @@ const postHack = async (text) => {
 
   const resetError = () => {
     setErrorOcurred(false);
+  }
+
+  const handleVote = (positive) => {
+    console.log("Voted", positive);
   }
 
   useEffect(() => {
@@ -266,7 +272,7 @@ const postHack = async (text) => {
               <div>Description: {hack.description}</div>
               <div>City: {hack.city}</div>
               <div>Category: {hack.category}</div>
-              <Poll/>
+              <Poll onVote={handleVote} upVotes={hack.upVotes} downVotes={hack.downVotes}/>
             </div>)
         })}
       </div>
