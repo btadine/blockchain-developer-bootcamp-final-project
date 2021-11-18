@@ -4,6 +4,7 @@ import abi from './utils/CityHacks.json';
 
 import { FormControl, FormSelect, Button, InputGroup } from 'react-bootstrap';
 import Popup from 'reactjs-popup';
+import Poll from './components/Poll.js';
 import 'reactjs-popup/dist/index.css';
 import './App.css';
 
@@ -265,6 +266,7 @@ const postHack = async (text) => {
               <div>Description: {hack.description}</div>
               <div>City: {hack.city}</div>
               <div>Category: {hack.category}</div>
+              <Poll/>
             </div>)
         })}
       </div>
