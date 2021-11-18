@@ -43,14 +43,14 @@ const App = () => {
 
   const NETWORKS = {
   1: "Ethereum Mainnet",
-  42: "Kovan Testnet",
+  2: "Kovan Testnet",
   3: "Ropsten Testnet",
   4: "Rinkeby Testnet",
   5: "Goerli Testnet",
 }
 const renderNetworkDetector = () => (
     <p className="footer-text">
-      {window.ethereum.networkVersion == 3 
+      {window.ethereum.networkVersion === `${NETWORKS[3]}` 
       ? `Post a hack (on ${NETWORKS[window.ethereum.networkVersion]})` 
       : `This only works on ${NETWORKS[3]}, please change your Network and refresh the page.`
       }
@@ -68,17 +68,17 @@ const renderNetworkDetector = () => (
         console.log("Make sure you have metamask!");
         return;
       } else {
-        console.log("We have the ethereum object", ethereum);
+        /*We have the ethereum object"*/
       }
 
       const accounts = await ethereum.request({ method: 'eth_accounts' });
 
       if (accounts.length !== 0) {
         const account = accounts[0];
-        console.log("Found an authorized account:", account);
+        /*Found an authorized account*/
         setCurrentAccount(account);
       } else {
-        console.log("No authorized account found")
+        /*No authorized account found. Show error*/
       }
     } catch (error) {
       console.log(error);
@@ -96,7 +96,7 @@ const renderNetworkDetector = () => (
 
       const accounts = await ethereum.request({ method: "eth_requestAccounts" });
 
-      console.log("Connected", accounts[0]);
+      /* Wallet Connected*/
       setCurrentAccount(accounts[0]); 
     } catch (error) {
       console.log(error)
@@ -141,18 +141,12 @@ const postHack = async (text) => {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         const cityHacksContract = new ethers.Contract(contractAddress, contractABI, signer);
-
-        let count = await cityHacksContract.getTotalHacks();
-        console.log("Retrieved total hack count...", count.toNumber());
         
         const hackTxn = await cityHacksContract.postHack(text, cityId, categoryId);
-        console.log("Mining...", hackTxn.hash);
+        // Mining, insert an animation to inform user.
 
         await hackTxn.wait();
-        console.log("Mined -- ", hackTxn.hash);
-        setTextValue("");
-        count = await cityHacksContract.getTotalHacks();
-        console.log("Retrieved total hack count...", count.toNumber());
+        // Txn mined
       } else {
         console.log("Ethereum object doesn't exist!");
       }
@@ -168,6 +162,7 @@ const postHack = async (text) => {
 
   const handleClick = async (event) => {
     await postHack(textValue);
+    setTextValue("");
     getAllHacks();
   }
 
@@ -189,6 +184,7 @@ const postHack = async (text) => {
 
   useEffect(() => {
     getAllHacks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   
   return (
