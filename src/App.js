@@ -218,7 +218,7 @@ const postHack = async (text) => {
   </Popup>
       <div className="dataContainer">
         <div className="header">
-        🏙️ Welcome to Cityhacks!
+        <span role="img" aria-label="City emoji">🏙️</span> Welcome to Cityhacks!
         </div>
 
         <div className="description">
@@ -228,13 +228,13 @@ const postHack = async (text) => {
         <FormSelect aria-label="Default select example" onChange={setCity}>
         {cities.map((city, index) => {
           return (
-            <option value={index}>{city}</option>);
+            <option key={'city'+index} value={index}>{city}</option>);
         })}
 </FormSelect>
         <FormSelect aria-label="Default select example" onChange={setCategory}>
         {categories.map((category, index) => {
           return (
-            <option value={index}>{category}</option>);
+            <option key={'category'+index} value={index}>{category}</option>);
         })}
 </FormSelect>
 </div>
