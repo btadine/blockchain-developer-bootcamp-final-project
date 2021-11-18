@@ -14,9 +14,7 @@ const App = () => {
     const [cityId, setCityId] = useState(0);
     const [categoryId, setCategoryId] = useState(0);
     const [errorOcurred, setErrorOcurred] = useState(false);
-  /**
-   * Create a variable here that holds the contract address after you deploy!
-   */
+
   const alchemyKey = "WQdePxSH5rFBaHe6TVIrlm6Xts-YZtT3";
   const cities = [
   "Choose a city",
@@ -87,9 +85,6 @@ const renderNetworkDetector = () => (
     }
   }
 
-  /**
-  * Implement your connectWallet method here
-  */
   const connectWallet = async () => {
     try {
       const { ethereum } = window;
@@ -115,14 +110,9 @@ const renderNetworkDetector = () => (
         const provider = new ethers.providers.AlchemyProvider("ropsten", alchemyKey);   
         const cityHacksContract = new ethers.Contract(contractAddress, contractABI, provider);
 
-        /*
-         * Call the getAllhacks method from your Smart Contract
-         */
+
         const hacks = await cityHacksContract.getAllHacks();
-        /*
-         * We only need address, timestamp, and message in our UI so let's
-         * pick those out
-         */
+
         let hacksCleaned = [];
         hacks.forEach(hack => {
           hacksCleaned.push({
@@ -134,9 +124,6 @@ const renderNetworkDetector = () => (
           });
         });
 
-        /*
-         * Store our data in React State
-         */
         setAllHacks(hacksCleaned);
       } else {
         console.log("Ethereum object doesn't exist!")
@@ -157,10 +144,6 @@ const postHack = async (text) => {
 
         let count = await cityHacksContract.getTotalHacks();
         console.log("Retrieved total hack count...", count.toNumber());
-
-        /*
-        * Execute the actual hack from your smart contract
-        */
         
         const hackTxn = await cityHacksContract.postHack(text, cityId, categoryId);
         console.log("Mining...", hackTxn.hash);
@@ -273,9 +256,6 @@ const postHack = async (text) => {
     </Button>
   </InputGroup>
           {renderNetworkDetector()}
-        {/*
-        * If there is no currentAccount render this button
-        */}
         {!currentAccount && (
           <button className="postHack" onClick={connectWallet}>
             Connect Wallet
