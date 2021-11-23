@@ -58,7 +58,7 @@ const renderNetworkDetector = () => (
     </p>
   )
 
-  const contractAddress = "0x1E6aba57aab452D40bb3b6D48Ee9DDB04c31bd62";
+  const contractAddress = "0x776b790ac3108ED770f466c9976583a483Cd3572";
   const contractABI = abi.abi;
   
   const checkIfWalletIsConnected = async () => {
@@ -117,13 +117,14 @@ const renderNetworkDetector = () => (
         let hacksCleaned = [];
         hacks.forEach(hack => {
           hacksCleaned.push({
-            address: hack.hacker,
+            id: hack.id.toNumber(),
+            address: hack.owner,
             timestamp: new Date(hack.timestamp * 1000),
             description: hack.description,
             city: cities[hack.cityId.toNumber()],
             category: categories[hack.categoryId.toNumber()],
-            upVotes: 0,
-            downVotes: 0
+            upvotes: hack.totalUpvotes.toNumber(),
+            downvotes: hack.totalDownvotes.toNumber()
           });
         });
 
@@ -159,6 +160,30 @@ const postHack = async (text) => {
     }
   }
 
+  const voteHack = async (hackId, vote) => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const cityHacksContract = new ethers.Contract(contractAddress, contractABI, signer);
+        const hackIdBigNumber = ethers.BigNumber.from(hackId);
+        console.log(hackId, vote, hackIdBigNumber);
+        const hackTxn = await cityHacksContract.voteHack(hackId, vote);
+        // Mining, insert an animation to inform user.
+
+        await hackTxn.wait();
+        // Txn mined
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+      setErrorOcurred(true);
+      console.log(error);
+    }
+  }
+
   const handleChange = (event) => {
     setTextValue(event.target.value);
   }
@@ -181,8 +206,10 @@ const postHack = async (text) => {
     setErrorOcurred(false);
   }
 
-  const handleVote = (positive) => {
-    console.log("Voted", positive);
+  const handleVote = async (vote, hackId) => {
+    console.log(hackId);
+    await voteHack(hackId, vote);
+    getAllHacks();
   }
 
   useEffect(() => {
@@ -272,7 +299,7 @@ const postHack = async (text) => {
               <div>Description: {hack.description}</div>
               <div>City: {hack.city}</div>
               <div>Category: {hack.category}</div>
-              <Poll onVote={handleVote} upVotes={hack.upVotes} downVotes={hack.downVotes}/>
+              <Poll hackId={hack.id} onVote={handleVote} upVotes={hack.upvotes} downVotes={hack.downvotes}/>
             </div>)
         })}
       </div>
