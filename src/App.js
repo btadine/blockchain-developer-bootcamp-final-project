@@ -51,9 +51,10 @@ const App = () => {
 }
 const renderNetworkDetector = () => (
     <p className="footer-text">
-      {window.ethereum.networkVersion === `${NETWORKS[3]}` 
+      {window.ethereum ? window.ethereum.networkVersion === `${NETWORKS[3]}` 
       ? `Post a hack (on ${NETWORKS[window.ethereum.networkVersion]})` 
       : `This only works on ${NETWORKS[3]}, please change your Network and refresh the page.`
+      : `You need metamask to post a hack.`
       }
     </p>
   )
@@ -284,8 +285,10 @@ const postHack = async (text) => {
     <Button className="postButton" variant="outline-secondary" id="button-addon2" onClick={handleClick}>
       Post
     </Button>
-  </InputGroup>
+        </InputGroup>
+        <div className="networkDetector">
           {renderNetworkDetector()}
+        </div>
         {!currentAccount && (
           <button className="postHack" onClick={connectWallet}>
             Connect Wallet
