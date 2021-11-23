@@ -107,8 +107,6 @@ const renderNetworkDetector = () => (
 
   const getAllHacks = async () => {
     try {
-      const { ethereum } = window;
-      if (ethereum) {
         const provider = new ethers.providers.AlchemyProvider("ropsten", alchemyKey);   
         const cityHacksContract = new ethers.Contract(contractAddress, contractABI, provider);
 
@@ -130,9 +128,6 @@ const renderNetworkDetector = () => (
         });
 
         setAllHacks(hacksCleaned.sort((a, b) => b.upvotes - a.upvotes));
-      } else {
-        console.log("Ethereum object doesn't exist!")
-      }
     } catch (error) {
       console.log(error);
     }
@@ -294,6 +289,7 @@ const postHack = async (text) => {
             Connect Wallet
           </button>
         )}
+        <div className="cityHacks">
         {allHacks.map((hack, index) => {
           return (
             <div key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
@@ -305,6 +301,7 @@ const postHack = async (text) => {
               <Poll hackId={hack.id} onVote={handleVote} upVotes={hack.upvotes} downVotes={hack.downvotes}/>
             </div>)
         })}
+        </div>
       </div>
     </div>
   );
