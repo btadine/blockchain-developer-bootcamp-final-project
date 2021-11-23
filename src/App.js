@@ -15,6 +15,11 @@ const App = () => {
     const [cityId, setCityId] = useState(0);
     const [categoryId, setCategoryId] = useState(0);
     const [errorOcurred, setErrorOcurred] = useState(false);
+    const [tipHackPressed, setTipHackPressed] = useState(false);
+    const [tipValue, setTipValue] = useState("");
+    const [hackId, setHackId] = useState(0);
+
+
 
   const alchemyKey = "WQdePxSH5rFBaHe6TVIrlm6Xts-YZtT3";
   const cities = [
@@ -59,7 +64,7 @@ const renderNetworkDetector = () => (
     </p>
   )
 
-  const contractAddress = "0x776b790ac3108ED770f466c9976583a483Cd3572";
+  const contractAddress = "0xB7b5b872948Ee07E6b7e43A935E600Cd79E8799E";
   const contractABI = abi.abi;
   
   const checkIfWalletIsConnected = async () => {
@@ -165,7 +170,6 @@ const postHack = async (text) => {
         const signer = provider.getSigner();
         const cityHacksContract = new ethers.Contract(contractAddress, contractABI, signer);
         const hackIdBigNumber = ethers.BigNumber.from(hackId);
-        console.log(hackId, vote, hackIdBigNumber);
         const hackTxn = await cityHacksContract.voteHack(hackId, vote);
         // Mining, insert an animation to inform user.
 
@@ -176,6 +180,34 @@ const postHack = async (text) => {
       }
     } catch (error) {
       setErrorOcurred(true);
+      console.log(error);
+    }
+  }
+
+    const tipHacker = async () => {
+      setTipHackPressed(false);
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const cityHacksContract = new ethers.Contract(contractAddress, contractABI, signer);
+        let overrides = { value: ethers.utils.parseEther(tipValue)};
+
+// Pass in the overrides as the 3rd parameter to your 2-parameter function:
+//let tx = await exchangeContract.ethToTokenSwapOutput(tokens_bought, deadline, overrides);
+        const hackTxn = await cityHacksContract.tipHacker(hackId, overrides);
+        // Mining, insert an animation to inform user.
+
+        await hackTxn.wait();
+        // Txn mined
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+      setErrorOcurred(true);
+      console.log("tipHacker")
       console.log(error);
     }
   }
@@ -202,6 +234,15 @@ const postHack = async (text) => {
     setErrorOcurred(false);
   }
 
+  const handleTip = (hackId) => {
+    setHackId(hackId);
+    setTipHackPressed(true);
+  }
+
+  const setTip = (event) => {
+    setTipValue(event.target.value);
+  }
+
   const handleVote = async (vote, hackId) => {
     console.log(hackId);
     await voteHack(hackId, vote);
@@ -219,6 +260,46 @@ const postHack = async (text) => {
   
   return (
     <div className="mainContainer">
+      <Popup open={tipHackPressed}
+       onClose={() => setTipHackPressed(false)}
+       position="right center">
+       {close => (
+      <div className="modal">
+        <button className="close" onClick={close}>
+          &times;
+        </button>
+        <div className="header"> Tip cityhacker </div>
+        <div className="content">
+          {' '}
+          Add the tip amount.
+        </div>
+                  <InputGroup className="inputGroup">
+    <FormControl
+      className="formControl"
+      placeholder="Amount in ethers"
+      aria-label="Tip amount"
+      aria-describedby="basic-addon2"
+      onChange={setTip}
+      value={tipValue}
+    />
+        <Button className="postButton" variant="outline-secondary" id="button-addon2" onClick={tipHacker}>
+      Tip
+    </Button>
+        </InputGroup>
+        <div className="actions">
+          <button
+            className="button"
+            onClick={() => {
+              console.log('modal closed ');
+              close();
+            }}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    )}
+  </Popup>
       <Popup open={errorOcurred}
        onClose={resetError}
        position="right center">
@@ -298,7 +379,14 @@ const postHack = async (text) => {
               <div>Description: {hack.description}</div>
               <div>City: {hack.city}</div>
               <div>Category: {hack.category}</div>
+              <div className="actionsContainer">
+                  <Button className="postButton" variant="outline-secondary" id="button-addon2" onClick={()=> handleTip(hack.id)}>
+      Tip
+    </Button>
+    <div className="poll">
               <Poll hackId={hack.id} onVote={handleVote} upVotes={hack.upvotes} downVotes={hack.downvotes}/>
+              </div>
+              </div>
             </div>)
         })}
         </div>

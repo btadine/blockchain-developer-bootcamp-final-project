@@ -35,6 +35,12 @@
   
 }
 
+.poll {
+display: flex;
+flex-direction: column;
+align-self: flex-end;
+}
+
 .inputGroup {
     padding: 20px;
     display: flex;
@@ -83,6 +89,13 @@ max-width: 100%;
 
 .cityhackfield {
 word-break: break-all;
+}
+
+.actionsContainer {
+padding-top: 20px;
+display: flex;
+flex-direction: row;
+justify-content: space-between;
 }
 
 .modal {
