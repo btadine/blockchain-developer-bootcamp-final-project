@@ -128,7 +128,7 @@ const renderNetworkDetector = () => (
           });
         });
 
-        setAllHacks(hacksCleaned);
+        setAllHacks(hacksCleaned.sort((a, b) => b.upvotes - a.upvotes));
       } else {
         console.log("Ethereum object doesn't exist!")
       }
