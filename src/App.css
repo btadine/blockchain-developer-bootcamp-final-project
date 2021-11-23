@@ -70,11 +70,19 @@ margin-left: 20px;
   max-width: 600px;
 }
 
-.cityHacks {
+.cityhacks {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  max-width: 600px;
+  max-width: 100%;
+}
+
+.cityhack {
+display: flex;
+max-width: 100%;
+}
+
+.cityhackfield {
+word-break: break-all;
 }
 
 .modal {

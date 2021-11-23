@@ -289,12 +289,12 @@ const postHack = async (text) => {
             Connect Wallet
           </button>
         )}
-        <div className="cityHacks">
+        <div className="cityhacks">
         {allHacks.map((hack, index) => {
           return (
-            <div key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
-              <div>Address: {hack.address}</div>
-              <div>Time: {hack.timestamp.toString()}</div>
+            <div className="cityHack" key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
+              <div className="cityhackfield">Address: {hack.address}</div>
+              <div className="cityhackfield">Time: {hack.timestamp.toString()}</div>
               <div>Description: {hack.description}</div>
               <div>City: {hack.city}</div>
               <div>Category: {hack.category}</div>
