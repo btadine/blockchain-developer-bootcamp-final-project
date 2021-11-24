@@ -2,24 +2,22 @@ import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import abi from './utils/CityHacks.json';
 
-import { FormControl, FormSelect, Button, InputGroup } from 'react-bootstrap';
+import { FormControl, Button, InputGroup } from 'react-bootstrap';
 import Popup from 'reactjs-popup';
-import Poll from './components/Poll.js';
+import TabComponent from './components/Tabs.js';
+import PostView from './components/PostView.js';
+import BrowseView from './components/BrowseView.js';
+
 import 'reactjs-popup/dist/index.css';
 import './App.css';
 
 const App = () => {
     const [allHacks, setAllHacks] = useState([]);
     const [currentAccount, setCurrentAccount] = useState("");
-    const [textValue, setTextValue] = useState("");
-    const [cityId, setCityId] = useState(0);
-    const [categoryId, setCategoryId] = useState(0);
     const [errorOcurred, setErrorOcurred] = useState(false);
     const [tipHackPressed, setTipHackPressed] = useState(false);
     const [tipValue, setTipValue] = useState("");
     const [hackId, setHackId] = useState(0);
-
-
 
   const alchemyKey = "WQdePxSH5rFBaHe6TVIrlm6Xts-YZtT3";
   const cities = [
@@ -47,23 +45,6 @@ const App = () => {
   "Misc"
   ];
 
-  const NETWORKS = {
-  1: "Ethereum Mainnet",
-  2: "Kovan Testnet",
-  3: "Ropsten Testnet",
-  4: "Rinkeby Testnet",
-  5: "Goerli Testnet",
-}
-const renderNetworkDetector = () => (
-    <p className="footer-text">
-      {window.ethereum ? window.ethereum.networkVersion === `${NETWORKS[3]}` 
-      ? `Post a hack (on ${NETWORKS[window.ethereum.networkVersion]})` 
-      : `This only works on ${NETWORKS[3]}, please change your Network and refresh the page.`
-      : `You need metamask to post a hack.`
-      }
-    </p>
-  )
-
   const contractAddress = "0xB7b5b872948Ee07E6b7e43A935E600Cd79E8799E";
   const contractABI = abi.abi;
   
@@ -86,6 +67,7 @@ const renderNetworkDetector = () => (
         setCurrentAccount(account);
       } else {
         /*No authorized account found. Show error*/
+        
       }
     } catch (error) {
       console.log(error);
@@ -138,7 +120,7 @@ const renderNetworkDetector = () => (
     }
   }
 
-const postHack = async (text) => {
+const postHack = async (text, cityId, categoryId) => {
     try {
       const { ethereum } = window;
 
@@ -169,7 +151,6 @@ const postHack = async (text) => {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         const cityHacksContract = new ethers.Contract(contractAddress, contractABI, signer);
-        const hackIdBigNumber = ethers.BigNumber.from(hackId);
         const hackTxn = await cityHacksContract.voteHack(hackId, vote);
         // Mining, insert an animation to inform user.
 
@@ -212,41 +193,17 @@ const postHack = async (text) => {
     }
   }
 
-  const handleChange = (event) => {
-    setTextValue(event.target.value);
-  }
-
-  const handleClick = async (event) => {
-    await postHack(textValue);
-    setTextValue("");
-    getAllHacks();
-  }
-
-  const setCity = (event) => {
-    setCityId(event.target.value);
-  }
-
-  const setCategory = (event) => {
-    setCategoryId(event.target.value);
-  }
-
   const resetError = () => {
     setErrorOcurred(false);
   }
 
-  const handleTip = (hackId) => {
+const handleTip = (hackId) => {
     setHackId(hackId);
     setTipHackPressed(true);
-  }
-
+}
+  
   const setTip = (event) => {
     setTipValue(event.target.value);
-  }
-
-  const handleVote = async (vote, hackId) => {
-    console.log(hackId);
-    await voteHack(hackId, vote);
-    getAllHacks();
   }
 
   useEffect(() => {
@@ -257,7 +214,7 @@ const postHack = async (text) => {
     getAllHacks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  
+  // (ie. cheap beers, a nice view spot, a hipster coffee place to work from...) Share and discover cool things in your city!
   return (
     <div className="mainContainer">
       <Popup open={tipHackPressed}
@@ -329,66 +286,16 @@ const postHack = async (text) => {
   </Popup>
       <div className="dataContainer">
         <div className="header">
-        <span role="img" aria-label="City emoji">🏙️</span> Welcome to Cityhacks!
+        <span role="img" aria-label="City emoji">🏙️</span> Cityhacks
         </div>
 
         <div className="description">
-          Share and discover cool things in your city (ie. cheap beers, a nice view spot, a hipster coffee place to work from...)
+<b>A decentralized city guide.</b><br></br><br></br>Have you ever wondered where locals eat, where they park, get the cheapest beers and the best coffee?<br></br><br></br>Go ahead and discover <b>the cool stuff</b>!
         </div>
-        <div className="selectorsContainer">
-        <FormSelect aria-label="Default select example" onChange={setCity}>
-        {cities.map((city, index) => {
-          return (
-            <option key={'city'+index} value={index}>{city}</option>);
-        })}
-</FormSelect>
-        <FormSelect aria-label="Default select example" onChange={setCategory}>
-        {categories.map((category, index) => {
-          return (
-            <option key={'category'+index} value={index}>{category}</option>);
-        })}
-</FormSelect>
-</div>
-          <InputGroup className="inputGroup">
-    <FormControl
-      className="formControl"
-      placeholder="Your cityhack"
-      aria-label="Your cityhack"
-      aria-describedby="basic-addon2"
-      onChange={handleChange}
-      value={textValue}
-    />
-    <Button className="postButton" variant="outline-secondary" id="button-addon2" onClick={handleClick}>
-      Post
-    </Button>
-        </InputGroup>
-        <div className="networkDetector">
-          {renderNetworkDetector()}
-        </div>
-        {!currentAccount && (
-          <button className="postHack" onClick={connectWallet}>
-            Connect Wallet
-          </button>
-        )}
-        <div className="cityhacks">
-        {allHacks.map((hack, index) => {
-          return (
-            <div className="cityHack" key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
-              <div className="cityhackfield">Address: {hack.address}</div>
-              <div className="cityhackfield">Time: {hack.timestamp.toString()}</div>
-              <div>Description: {hack.description}</div>
-              <div>City: {hack.city}</div>
-              <div>Category: {hack.category}</div>
-              <div className="actionsContainer">
-                  <Button className="postButton" variant="outline-secondary" id="button-addon2" onClick={()=> handleTip(hack.id)}>
-      Tip
-    </Button>
-    <div className="poll">
-              <Poll hackId={hack.id} onVote={handleVote} upVotes={hack.upvotes} downVotes={hack.downvotes}/>
-              </div>
-              </div>
-            </div>)
-        })}
+        <div className="tabsContainer">
+        <TabComponent postView={() => <PostView metamask={window.ethereum !== undefined} 
+        networkVersion={window.ethereum.networkVersion} postHack={postHack} getAllHacks={getAllHacks} connectWallet={connectWallet} accountNotFound={!currentAccount} />} browseView={() => <BrowseView hacks={allHacks} getAllHacks={getAllHacks} voteHack={voteHack} handleTip={handleTip}/>}>
+        </TabComponent>
         </div>
       </div>
     </div>
