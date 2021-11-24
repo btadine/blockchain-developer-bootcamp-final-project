@@ -1,13 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Poll from './Poll.js';
 import { Button } from 'react-bootstrap';
 
 const BrowseView = (props) => {
-
+  const [hackIdsVoted, setHackIdsVoted] = useState([]);
+  const [hackIdsVotes, setHackIdsVotes] = useState([]);
   const handleVote = async (vote, hackId) => {
     await props.voteHack(hackId, vote);
-    props.getAllHacks();
+    await props.getAllHacks();
+    props.fetchEvents();
   }
+
+  useEffect(() => {
+    setHackIdsVoted(props.votedHacks.map ((votedHack) => votedHack.hackId))
+    setHackIdsVotes(props.votedHacks.map ((votedHack) => votedHack.vote))
+  }, [props])
+
+  
+  
   return (
     <div>
       <div className="cityhacks">
@@ -24,7 +34,7 @@ const BrowseView = (props) => {
                   Tip
                   </Button>
                 <div className="poll">
-                <Poll hackId={hack.id} onVote={handleVote} upVotes={hack.upvotes} downVotes={hack.downvotes}/>
+                <Poll hackId={hack.id} onVote={handleVote} upVotes={hack.upvotes} downVotes={hack.downvotes} hackIdsVotes={hackIdsVotes} hackIdsVoted={hackIdsVoted}/>
                 </div>
               </div>
             </div>)

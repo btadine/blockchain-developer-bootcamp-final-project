@@ -18,6 +18,7 @@ const App = () => {
     const [tipHackPressed, setTipHackPressed] = useState(false);
     const [tipValue, setTipValue] = useState("");
     const [hackId, setHackId] = useState(0);
+    const [votedHacks, setVotedHacks] = useState([]);
 
   const alchemyKey = "WQdePxSH5rFBaHe6TVIrlm6Xts-YZtT3";
   const cities = [
@@ -64,7 +65,9 @@ const App = () => {
       if (accounts.length !== 0) {
         const account = accounts[0];
         /*Found an authorized account*/
+        console.log("Setting account", account);
         setCurrentAccount(account);
+        getAllEvents(account);
       } else {
         /*No authorized account found. Show error*/
         
@@ -113,12 +116,44 @@ const App = () => {
             downvotes: hack.totalDownvotes.toNumber()
           });
         });
-
         setAllHacks(hacksCleaned.sort((a, b) => b.upvotes - a.upvotes));
     } catch (error) {
       console.log(error);
     }
   }
+
+const getAllEvents = async (account) => {
+  try {
+    const provider = new ethers.providers.AlchemyProvider("ropsten", alchemyKey);   
+
+    let ens = new ethers.Contract(contractAddress, contractABI, provider);
+
+    const query = await ens.queryFilter(ens.filters.VotedHack(account), provider.getBlockNumber().then((b) => b - 10000), "latest")
+
+    var voteIds = [];
+    var votes = [];
+    query.map((event, index) => {
+      const hackId = event.args[1].toNumber();
+      const vote = event.args[2];
+      const timestamp = event.args[3].toNumber();
+      const voteObject = { "hackId" : hackId, "vote": vote, "timestamp" : timestamp }
+      console.log(voteObject);
+      if (!voteIds.includes(hackId)) {
+        votes.push(voteObject);
+        voteIds.push(hackId);
+      }
+      else {
+       const index = voteIds.indexOf(hackId);
+       votes[index] = votes[index].timestamp < voteObject.timestamp ? voteObject : votes[index]
+      }
+    });
+
+    setVotedHacks(votes);
+  
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 const postHack = async (text, cityId, categoryId) => {
     try {
@@ -176,8 +211,6 @@ const postHack = async (text, cityId, categoryId) => {
         const cityHacksContract = new ethers.Contract(contractAddress, contractABI, signer);
         let overrides = { value: ethers.utils.parseEther(tipValue)};
 
-// Pass in the overrides as the 3rd parameter to your 2-parameter function:
-//let tx = await exchangeContract.ethToTokenSwapOutput(tokens_bought, deadline, overrides);
         const hackTxn = await cityHacksContract.tipHacker(hackId, overrides);
         // Mining, insert an animation to inform user.
 
@@ -206,8 +239,12 @@ const handleTip = (hackId) => {
     setTipValue(event.target.value);
   }
 
+  const fetchEvents = () => {
+    getAllEvents(currentAccount);
+  }
+
   useEffect(() => {
-    checkIfWalletIsConnected();
+      checkIfWalletIsConnected();
   }, [])
 
   useEffect(() => {
@@ -294,7 +331,7 @@ const handleTip = (hackId) => {
         </div>
         <div className="tabsContainer">
         <TabComponent postView={() => <PostView metamask={window.ethereum !== undefined} 
-        networkVersion={window.ethereum.networkVersion} postHack={postHack} getAllHacks={getAllHacks} connectWallet={connectWallet} accountNotFound={!currentAccount} />} browseView={() => <BrowseView hacks={allHacks} getAllHacks={getAllHacks} voteHack={voteHack} handleTip={handleTip}/>}>
+        networkVersion={window.ethereum !== undefined ? window.ethereum.networkVersion : 'none' } postHack={postHack} getAllHacks={getAllHacks} connectWallet={connectWallet} accountNotFound={!currentAccount} />} browseView={() => <BrowseView hacks={allHacks} getAllHacks={getAllHacks} fetchEvents={fetchEvents} voteHack={voteHack} handleTip={handleTip} votedHacks={votedHacks}/>}>
         </TabComponent>
         </div>
       </div>

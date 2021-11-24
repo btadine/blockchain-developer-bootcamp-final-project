@@ -72,7 +72,7 @@ const PostView = (props) => {
     <InputGroup className="inputGroup">
     <FormControl
       className="formControl"
-      placeholder="Your cityhack"
+      placeholder="ie. cheap beers, a nice view spot, a hipster coffee place to work from..."
       aria-label="Your cityhack"
       aria-describedby="basic-addon2"
       onChange={(e) => setTextValue(e.target.value)}
