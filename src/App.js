@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
+import Web3Modal from 'web3modal';
+import WalletConnectProvider from '@walletconnect/web3-provider';
 import abi from './utils/CityHacks.json';
 
 import { FormControl, Button, InputGroup } from 'react-bootstrap';
@@ -48,6 +50,30 @@ const App = () => {
 
   const contractAddress = "0xB7b5b872948Ee07E6b7e43A935E600Cd79E8799E";
   const contractABI = abi.abi;
+
+  async function getWeb3Modal() {
+      const web3Modal = new Web3Modal({
+        network: 'ropsten',
+        cacheProvider: false,
+        providerOptions: {
+          walletconnect: {
+            package: WalletConnectProvider,
+            options: {
+              infuraId: '986b52d1f39e41b1aabbd6be520163a5'
+            },
+          },
+        },
+      })
+      return web3Modal
+    }
+
+  async function connect() {
+      const web3Modal = await getWeb3Modal();
+      const connection = await web3Modal.connect();
+      const provider = new ethers.providers.Web3Provider(connection);
+      const accounts = await provider.listAccounts();
+      setCurrentAccount(accounts[0]);
+  }
   
   const checkIfWalletIsConnected = async () => {
     try {
