@@ -16,6 +16,9 @@ import './App.css';
 const App = () => {
     const [allHacks, setAllHacks] = useState([]);
     const [currentAccount, setCurrentAccount] = useState("");
+    const [connection, setConnection] = useState(false);
+    const [provider, setProvider] = useState(false);
+
     const [errorOcurred, setErrorOcurred] = useState(false);
     const [tipHackPressed, setTipHackPressed] = useState(false);
     const [tipValue, setTipValue] = useState("");
@@ -70,8 +73,11 @@ const App = () => {
   async function connect() {
       const web3Modal = await getWeb3Modal();
       const connection = await web3Modal.connect();
+      console.log(connection);
       const provider = new ethers.providers.Web3Provider(connection);
       const accounts = await provider.listAccounts();
+      setConnection(connection);
+      setProvider(provider);
       setCurrentAccount(accounts[0]);
   }
   
@@ -80,7 +86,7 @@ const App = () => {
       const { ethereum } = window;
 
       if (!ethereum) {
-        console.log("Make sure you have metamask!");
+        console.log("Make sure you have metamas)k!");
         return;
       } else {
         /*We have the ethereum object"*/
@@ -104,21 +110,22 @@ const App = () => {
   }
 
   const connectWallet = async () => {
-    try {
-      const { ethereum } = window;
+    connect();
+    //try {
+      //const { ethereum } = window;
 
-      if (!ethereum) {
-        alert("Get MetaMask!");
-        return;
-      }
+      //if (!ethereum) {
+        //alert("Get MetaMask!");
+        //return;
+      //}
 
-      const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+      //const accounts = await ethereum.request({ method: "eth_requestAccounts" });
 
       /* Wallet Connected*/
-      setCurrentAccount(accounts[0]); 
-    } catch (error) {
-      console.log(error)
-    }
+      //setCurrentAccount(accounts[0]); 
+    //} catch (error) {
+    //  console.log(error)
+    //}
   }
 
   const getAllHacks = async () => {
@@ -183,10 +190,7 @@ const getAllEvents = async (account) => {
 
 const postHack = async (text, cityId, categoryId) => {
     try {
-      const { ethereum } = window;
-
-      if (ethereum) {
-        const provider = new ethers.providers.Web3Provider(ethereum);
+        //const provider = new ethers.providers.Web3Provider(connection);
         const signer = provider.getSigner();
         const cityHacksContract = new ethers.Contract(contractAddress, contractABI, signer);
         
@@ -195,9 +199,7 @@ const postHack = async (text, cityId, categoryId) => {
 
         await hackTxn.wait();
         // Txn mined
-      } else {
-        console.log("Ethereum object doesn't exist!");
-      }
+
     } catch (error) {
       setErrorOcurred(true);
       console.log(error);
@@ -206,10 +208,7 @@ const postHack = async (text, cityId, categoryId) => {
 
   const voteHack = async (hackId, vote) => {
     try {
-      const { ethereum } = window;
-
-      if (ethereum) {
-        const provider = new ethers.providers.Web3Provider(ethereum);
+        //const provider = new ethers.providers.Web3Provider(connection);
         const signer = provider.getSigner();
         const cityHacksContract = new ethers.Contract(contractAddress, contractABI, signer);
         const hackTxn = await cityHacksContract.voteHack(hackId, vote);
@@ -217,9 +216,7 @@ const postHack = async (text, cityId, categoryId) => {
 
         await hackTxn.wait();
         // Txn mined
-      } else {
-        console.log("Ethereum object doesn't exist!");
-      }
+
     } catch (error) {
       setErrorOcurred(true);
       console.log(error);
@@ -229,10 +226,7 @@ const postHack = async (text, cityId, categoryId) => {
     const tipHacker = async () => {
       setTipHackPressed(false);
     try {
-      const { ethereum } = window;
-
-      if (ethereum) {
-        const provider = new ethers.providers.Web3Provider(ethereum);
+        //const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         const cityHacksContract = new ethers.Contract(contractAddress, contractABI, signer);
         let overrides = { value: ethers.utils.parseEther(tipValue)};
@@ -242,9 +236,7 @@ const postHack = async (text, cityId, categoryId) => {
 
         await hackTxn.wait();
         // Txn mined
-      } else {
-        console.log("Ethereum object doesn't exist!");
-      }
+
     } catch (error) {
       setErrorOcurred(true);
       console.log("tipHacker")
