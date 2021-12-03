@@ -5,6 +5,14 @@
   margin-top: 64px;
 }
 
+.headerTitle {
+  color: white;
+}
+
+.fullPage {
+  background-color: #000000;
+}
+
 .dataContainer {
   display: flex;
   flex-direction: column;

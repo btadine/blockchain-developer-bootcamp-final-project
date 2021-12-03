@@ -90,21 +90,26 @@ const App = () => {
       } else {
         /*We have the ethereum object"*/
       }
-
-      const accounts = await ethereum.request({ method: 'eth_accounts' });
-      console.log(accounts.length);
-      if (accounts.length !== 0) {
-        const account = accounts[0];
+      console.log("Pardon?");
+      const web3Modal = await getWeb3Modal();
+      if (web3Modal.cachedProvider) {
+        connect();
+      }
+      
+      //const accounts = await ethereum.request({ method: 'eth_accounts' });
+      //console.log(accounts.length);
+      //if (accounts.length !== 0) {
+        //const account = accounts[0];
         /*Found an authorized account*/
-        console.log("Setting account", account);
-        setAccount(accounts[0]);
-        const newProvider = new ethers.providers.Web3Provider(ethereum);
-        console.log(newProvider);
-        setProvider(newProvider);
-      } else {
+        //console.log("Setting account", account);
+        //setAccount(accounts[0]);
+        //const newProvider = new ethers.providers.Web3Provider(ethereum);
+        //console.log(newProvider);
+        //setProvider(newProvider);
+      //} else {
         /*No authorized account found. Show error*/
         
-      }
+      //}
     } catch (error) {
       console.log(error);
     }
@@ -276,7 +281,13 @@ const handleTip = (hackId) => {
     checkIfWalletIsConnected();
   }, [])
 
+function changebackground(){
+    document.body.style.backgroundColor = 'black';
+  }
+
   return (
+    <div className="fullPage">
+      {changebackground()}
     <div className="mainContainer">
       <Popup open={tipHackPressed}
        onClose={() => setTipHackPressed(false)}
@@ -347,7 +358,7 @@ const handleTip = (hackId) => {
   </Popup>
       <div className="dataContainer">
         <div className="header">
-        <span role="img" aria-label="City emoji">🏙️</span> Cityhacks
+        <div className="headerTitle"><span role="img" aria-label="City emoji">🏙️</span> Cityhacks</div>
         </div>
 
         <div className="description">
@@ -361,6 +372,7 @@ const handleTip = (hackId) => {
         </TabComponent>
         </div>
       </div>
+    </div>
     </div>
   );
 }
