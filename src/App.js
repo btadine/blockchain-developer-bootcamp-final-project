@@ -57,7 +57,7 @@ const App = () => {
   async function getWeb3Modal() {
       const web3Modal = new Web3Modal({
         network: 'ropsten',
-        cacheProvider: false,
+        cacheProvider: true,
         providerOptions: {
           walletconnect: {
             package: WalletConnectProvider,
