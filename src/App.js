@@ -17,7 +17,7 @@ const App = () => {
     const [allHacks, setAllHacks] = useState([]);
     const [currentAccount, setCurrentAccount] = useState("");
     const [connection, setConnection] = useState(false);
-    const [provider, setProvider] = useState(false);
+    const [provider, setProvider] = useState({});
 
     const [errorOcurred, setErrorOcurred] = useState(false);
     const [tipHackPressed, setTipHackPressed] = useState(false);
@@ -73,7 +73,6 @@ const App = () => {
   async function connect() {
       const web3Modal = await getWeb3Modal();
       const connection = await web3Modal.connect();
-      console.log(connection);
       const provider = new ethers.providers.Web3Provider(connection);
       const accounts = await provider.listAccounts();
       setConnection(connection);
@@ -93,19 +92,30 @@ const App = () => {
       }
 
       const accounts = await ethereum.request({ method: 'eth_accounts' });
-
+      console.log(accounts.length);
       if (accounts.length !== 0) {
         const account = accounts[0];
         /*Found an authorized account*/
         console.log("Setting account", account);
-        setCurrentAccount(account);
-        getAllEvents(account);
+        setAccount(accounts[0]);
+        const newProvider = new ethers.providers.Web3Provider(ethereum);
+        console.log(newProvider);
+        setProvider(newProvider);
       } else {
         /*No authorized account found. Show error*/
         
       }
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  const setAccount = (account) => {
+    console.log("Setting account", account);
+    if (this.setState !== undefined) {
+    this.setState({currentAccount : account}, () => {
+      fetchEvents();
+    });
     }
   }
 
@@ -130,8 +140,8 @@ const App = () => {
 
   const getAllHacks = async () => {
     try {
-        const provider = new ethers.providers.AlchemyProvider("ropsten", alchemyKey);   
-        const cityHacksContract = new ethers.Contract(contractAddress, contractABI, provider);
+        const newProvider = new ethers.providers.AlchemyProvider("ropsten", alchemyKey);   
+        const cityHacksContract = new ethers.Contract(contractAddress, contractABI, newProvider);
 
 
         const hacks = await cityHacksContract.getAllHacks();
@@ -157,15 +167,15 @@ const App = () => {
 
 const getAllEvents = async (account) => {
   try {
-    const provider = new ethers.providers.AlchemyProvider("ropsten", alchemyKey);   
+    const newProvider = new ethers.providers.AlchemyProvider("ropsten", alchemyKey);   
 
-    let ens = new ethers.Contract(contractAddress, contractABI, provider);
-
-    const query = await ens.queryFilter(ens.filters.VotedHack(account), provider.getBlockNumber().then((b) => b - 10000), "latest")
+    let ens = new ethers.Contract(contractAddress, contractABI, newProvider);
+    
+    const query = await ens.queryFilter(ens.filters.VotedHack(account), provider.getBlockNumber().then((b) => b - 10000), "latest");
 
     var voteIds = [];
     var votes = [];
-    query.map((event, index) => {
+    query.forEach((event, index) => {
       const hackId = event.args[1].toNumber();
       const vote = event.args[2];
       const timestamp = event.args[3].toNumber();
@@ -262,14 +272,10 @@ const handleTip = (hackId) => {
   }
 
   useEffect(() => {
-      checkIfWalletIsConnected();
+    getAllHacks();
+    checkIfWalletIsConnected();
   }, [])
 
-  useEffect(() => {
-    getAllHacks();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-  // (ie. cheap beers, a nice view spot, a hipster coffee place to work from...) Share and discover cool things in your city!
   return (
     <div className="mainContainer">
       <Popup open={tipHackPressed}
@@ -348,8 +354,10 @@ const handleTip = (hackId) => {
 <b>A decentralized city guide.</b><br></br><br></br>Have you ever wondered where locals eat, where they park, get the cheapest beers and the best coffee?<br></br><br></br>Go ahead and discover <b>the cool stuff</b>!
         </div>
         <div className="tabsContainer">
-        <TabComponent postView={() => <PostView metamask={window.ethereum !== undefined} 
-        networkVersion={window.ethereum !== undefined ? window.ethereum.networkVersion : 'none' } postHack={postHack} getAllHacks={getAllHacks} connectWallet={connectWallet} accountNotFound={!currentAccount} />} browseView={() => <BrowseView hacks={allHacks} getAllHacks={getAllHacks} fetchEvents={fetchEvents} voteHack={voteHack} handleTip={handleTip} votedHacks={votedHacks}/>}>
+        <TabComponent>
+        <BrowseView hacks={allHacks} getAllHacks={getAllHacks} fetchEvents={fetchEvents} voteHack={voteHack} handleTip={handleTip} votedHacks={votedHacks}/>
+        <PostView metamask={window.ethereum !== undefined} 
+        networkVersion={window.ethereum !== undefined ? window.ethereum.networkVersion : 'none' } postHack={postHack} getAllHacks={getAllHacks} connectWallet={connectWallet} accountNotFound={!currentAccount} />
         </TabComponent>
         </div>
       </div>

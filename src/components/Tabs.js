@@ -3,6 +3,8 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
 const TabComponent = (props) => {
+  const [BrowseView, PostView] = props.children;
+
   return (
   <Tabs>
     <TabList>
@@ -11,12 +13,12 @@ const TabComponent = (props) => {
     </TabList>
     <TabPanel>
       <div>
-      {props.browseView()}
+      {BrowseView}
       </div>
     </TabPanel>
     <TabPanel>
       <div>
-      {props.postView()}
+      {PostView}
       </div>
     </TabPanel>
   </Tabs>
