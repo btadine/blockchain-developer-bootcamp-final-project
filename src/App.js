@@ -4,7 +4,6 @@ import Web3Modal from 'web3modal';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import abi from './utils/CityHacks.json';
 
-import { FormControl, Button, InputGroup } from 'react-bootstrap';
 import Popup from 'reactjs-popup';
 import TabComponent from './components/Tabs.js';
 import PostView from './components/PostView.js';
@@ -24,6 +23,7 @@ const App = () => {
     const [tipValue, setTipValue] = useState("");
     const [hackId, setHackId] = useState(0);
     const [votedHacks, setVotedHacks] = useState([]);
+    const [filters, setFilters] = useState({});
 
   const alchemyKey = "WQdePxSH5rFBaHe6TVIrlm6Xts-YZtT3";
   const cities = [
@@ -90,7 +90,6 @@ const App = () => {
       } else {
         /*We have the ethereum object"*/
       }
-      console.log("Pardon?");
       const web3Modal = await getWeb3Modal();
       if (web3Modal.cachedProvider) {
         connect();
@@ -164,7 +163,20 @@ const App = () => {
             downvotes: hack.totalDownvotes.toNumber()
           });
         });
-        setAllHacks(hacksCleaned.sort((a, b) => b.upvotes - a.upvotes));
+
+        let hacksFiltered = [];
+        if (filters.city && filters.category) {
+          hacksFiltered = hacksCleaned.filter((a) => a.city === filters.city && a.category === filters.category);
+          console.log("found city and category", hacksFiltered)
+        } else if (filters.city) {
+          hacksFiltered = hacksCleaned.filter((a) => a.city === filters.city);
+           console.log("found city", hacksFiltered)
+        } else {
+          hacksFiltered = hacksCleaned;
+           console.log("not found filters", hacksFiltered)
+        }
+        const hacksSorted = hacksFiltered.sort((a, b) => b.upvotes - a.upvotes);
+        setAllHacks(hacksSorted);
     } catch (error) {
       console.log(error);
     }
@@ -281,15 +293,20 @@ const handleTip = (hackId) => {
     checkIfWalletIsConnected();
   }, [])
 
+  useEffect(() => {
+    getAllHacks();
+  }, [filters])
+
 function changebackground(){
     document.body.style.backgroundColor = 'black';
   }
 
-  return (
-    <div className="fullPage">
-      {changebackground()}
-    <div className="mainContainer">
-      <Popup open={tipHackPressed}
+const setFiltersAndReload = (filters) => {
+  setFilters(filters);
+}
+
+  const fix = () => {
+    /*<Popup open={tipHackPressed}
        onClose={() => setTipHackPressed(false)}
        position="right center">
        {close => (
@@ -328,7 +345,13 @@ function changebackground(){
         </div>
       </div>
     )}
-  </Popup>
+  </Popup>*/
+  }
+
+  return (
+    <div className="fullPage">
+      {changebackground()}
+    <div className="mainContainer">
       <Popup open={errorOcurred}
        onClose={resetError}
        position="right center">
@@ -362,15 +385,11 @@ function changebackground(){
         </div>
 
         <div className="description">
-<b>A decentralized city guide.</b><br></br><br></br>Have you ever wondered where locals eat, where they park, get the cheapest beers and the best coffee?<br></br><br></br>Go ahead and discover <b>the cool stuff</b>!
+<b>Your decentralized city guide.</b><br></br><br></br>Go ahead and discover <b>the cool stuff</b> happening in your city!
         </div>
-        <div className="tabsContainer">
-        <TabComponent>
-        <BrowseView hacks={allHacks} getAllHacks={getAllHacks} fetchEvents={fetchEvents} voteHack={voteHack} handleTip={handleTip} votedHacks={votedHacks}/>
+        <BrowseView hacks={allHacks} getAllHacks={getAllHacks} fetchEvents={fetchEvents} voteHack={voteHack} handleTip={handleTip} votedHacks={votedHacks} setFilters={setFiltersAndReload}/>
         <PostView metamask={window.ethereum !== undefined} 
         networkVersion={window.ethereum !== undefined ? window.ethereum.networkVersion : 'none' } postHack={postHack} getAllHacks={getAllHacks} connectWallet={connectWallet} accountNotFound={!currentAccount} />
-        </TabComponent>
-        </div>
       </div>
     </div>
     </div>

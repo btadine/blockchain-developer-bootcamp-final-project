@@ -6,3 +6,7 @@
 .buttonSelected {
   background-color: lightgrey;
 }
+
+.voteButton {
+  border-radius: 15px;
+}

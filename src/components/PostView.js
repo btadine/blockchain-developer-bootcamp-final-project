@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import './PostView.css';
 
-import { FormControl, FormSelect, Button, InputGroup } from 'react-bootstrap';
+//import { FormControl, FormSelect, Button, InputGroup } from 'react-bootstrap';
 import NetworkDetector from './NetworkDetector.js';
 
 const PostView = (props) => {
@@ -40,23 +40,8 @@ const PostView = (props) => {
     props.getAllHacks();
   }
 
-  return (
-    <div>
-                    {props.accountNotFound ? (
-                      <div>
-                            <div className="networkDetector">
-      <NetworkDetector metamask={props.metamask} networkVersion={props.networkVersion}/>
-      </div>
-          <div className="connectWalletContainer">
-          <button className="connectWalletButton" onClick={props.connectWallet}>
-            Connect Wallet
-          </button>
-          </div>
-          </div>
-        ) :
-(<div>
-<div className="selectorsContainer">
-        <FormSelect aria-label="Default select example" onChange={(e) => setCityId(e.target.value)}>
+  const fix = () => {
+            /*<FormSelect aria-label="Default select example" onChange={(e) => setCityId(e.target.value)}>
         {cities.map((city, index) => {
           return (
             <option key={'city'+index} value={index}>{city}</option>);
@@ -82,6 +67,26 @@ const PostView = (props) => {
       Post
     </Button>
         </InputGroup>
+        */
+  }
+
+  return (
+    <div>
+                    {props.accountNotFound ? (
+                      <div>
+                            <div className="networkDetector">
+      <NetworkDetector metamask={props.metamask} networkVersion={props.networkVersion}/>
+      </div>
+          <div className="connectWalletContainer">
+          <button className="connectWalletButton" onClick={props.connectWallet}>
+            Connect Wallet
+          </button>
+          </div>
+          </div>
+        ) :
+(<div>
+<div className="selectorsContainer">
+     </div>
      </div>
   )}
       </div>

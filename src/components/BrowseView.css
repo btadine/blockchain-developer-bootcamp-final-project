@@ -1,7 +1,26 @@
-.postButton {
-  border-radius: 5 + 'px';
+.tipButton {
+  border-radius: 15px;
 }
 
 .cityhackfield {
   color: white;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  padding: 60px;
+}
+
+.browserCont {
+  display: flex;
+  flex-direction: column;
+}
+
+.headerTitle {
+  color: white;
+}
+
+.headerContainer {
+  padding-top: 30px;
 }
