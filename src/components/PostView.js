@@ -43,7 +43,6 @@ const PostView = (props) => {
   }
 
   const openPopup = () => {
-
   }
 
   const fix = () => {
@@ -93,7 +92,7 @@ const PostView = (props) => {
 (<div className="postHackContainer">
 <div className="connected">You're connected</div>
 <div className="connectWalletContainer">
-          <Button className="connectWalletButton" onClick={openPopup()}>
+          <Button className="connectWalletButton" onClick={props.openPostView}>
             Post a hack
           </Button>
      </div>

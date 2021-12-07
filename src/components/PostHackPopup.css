@@ -1,0 +1,11 @@
+.hackPopup {
+    pointer-events: none;
+}
+
+.select {
+    pointer-events: none;
+}
+
+.descriptionBox {
+  padding-top: 25px;
+}

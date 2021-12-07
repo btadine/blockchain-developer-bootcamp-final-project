@@ -8,6 +8,7 @@ import Popup from 'reactjs-popup';
 import TabComponent from './components/Tabs.js';
 import PostView from './components/PostView.js';
 import BrowseView from './components/BrowseView.js';
+import PostHackPopup from './components/PostHackPopup.js'
 
 import 'reactjs-popup/dist/index.css';
 import './App.css';
@@ -24,6 +25,7 @@ const App = () => {
     const [hackId, setHackId] = useState(0);
     const [votedHacks, setVotedHacks] = useState([]);
     const [filters, setFilters] = useState({});
+    const [openPostPopup, setOpenPostPopup] = useState(false);
 
   const alchemyKey = "WQdePxSH5rFBaHe6TVIrlm6Xts-YZtT3";
   const cities = [
@@ -305,6 +307,16 @@ const setFiltersAndReload = (filters) => {
   setFilters(filters);
 }
 
+const openPopup = () => {
+  console.log("opening popup")
+  setOpenPostPopup(true)
+}
+
+const closePopup = () => {
+  console.log("closing popup")
+  setOpenPostPopup(false)
+}
+
   const fix = () => {
     /*<Popup open={tipHackPressed}
        onClose={() => setTipHackPressed(false)}
@@ -350,9 +362,12 @@ const setFiltersAndReload = (filters) => {
 
   return (
     <div className="fullPage">
+    <PostHackPopup 
+    visible={openPostPopup} 
+    closePopup={closePopup}/>
     <div className="banner">
             <PostView metamask={window.ethereum !== undefined} 
-        networkVersion={window.ethereum !== undefined ? window.ethereum.networkVersion : 'none' } postHack={postHack} getAllHacks={getAllHacks} connectWallet={connectWallet} accountNotFound={!currentAccount} />
+        networkVersion={window.ethereum !== undefined ? window.ethereum.networkVersion : 'none' } postHack={postHack} getAllHacks={getAllHacks} connectWallet={connectWallet} accountNotFound={!currentAccount} openPostView={openPopup} closePopup={closePopup} />
     </div>
       {changebackground()}
     <div className="mainContainer">
