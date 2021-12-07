@@ -350,6 +350,10 @@ const setFiltersAndReload = (filters) => {
 
   return (
     <div className="fullPage">
+    <div className="banner">
+            <PostView metamask={window.ethereum !== undefined} 
+        networkVersion={window.ethereum !== undefined ? window.ethereum.networkVersion : 'none' } postHack={postHack} getAllHacks={getAllHacks} connectWallet={connectWallet} accountNotFound={!currentAccount} />
+    </div>
       {changebackground()}
     <div className="mainContainer">
       <Popup open={errorOcurred}
@@ -388,8 +392,6 @@ const setFiltersAndReload = (filters) => {
 <b>Your decentralized city guide.</b><br></br><br></br>Go ahead and discover <b>the cool stuff</b> happening in your city!
         </div>
         <BrowseView hacks={allHacks} getAllHacks={getAllHacks} fetchEvents={fetchEvents} voteHack={voteHack} handleTip={handleTip} votedHacks={votedHacks} setFilters={setFiltersAndReload}/>
-        <PostView metamask={window.ethereum !== undefined} 
-        networkVersion={window.ethereum !== undefined ? window.ethereum.networkVersion : 'none' } postHack={postHack} getAllHacks={getAllHacks} connectWallet={connectWallet} accountNotFound={!currentAccount} />
       </div>
     </div>
     </div>

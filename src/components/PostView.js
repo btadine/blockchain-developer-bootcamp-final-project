@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import './PostView.css';
+import { Button } from 'antd';
+import 'antd/dist/antd.css';
 
 //import { FormControl, FormSelect, Button, InputGroup } from 'react-bootstrap';
 import NetworkDetector from './NetworkDetector.js';
@@ -40,6 +42,10 @@ const PostView = (props) => {
     props.getAllHacks();
   }
 
+  const openPopup = () => {
+
+  }
+
   const fix = () => {
             /*<FormSelect aria-label="Default select example" onChange={(e) => setCityId(e.target.value)}>
         {cities.map((city, index) => {
@@ -71,21 +77,25 @@ const PostView = (props) => {
   }
 
   return (
-    <div>
+    <div className="postView">
                     {props.accountNotFound ? (
-                      <div>
+                      <div className="mainBannerContainer">
                             <div className="networkDetector">
       <NetworkDetector metamask={props.metamask} networkVersion={props.networkVersion}/>
       </div>
           <div className="connectWalletContainer">
-          <button className="connectWalletButton" onClick={props.connectWallet}>
+          <Button className="connectWalletButton" onClick={props.connectWallet}>
             Connect Wallet
-          </button>
+          </Button>
           </div>
           </div>
         ) :
-(<div>
-<div className="selectorsContainer">
+(<div className="postHackContainer">
+<div className="connected">You're connected</div>
+<div className="connectWalletContainer">
+          <Button className="connectWalletButton" onClick={openPopup()}>
+            Post a hack
+          </Button>
      </div>
      </div>
   )}

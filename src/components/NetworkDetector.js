@@ -1,5 +1,5 @@
 import React from "react";
-
+import './NetworkDetector.css';
 const NetworkDetector = (props) => {
   const NETWORKS = {
   1: "Ethereum Mainnet",
@@ -16,7 +16,7 @@ const expectedNetwork = `3`;
       {props.metamask ? props.networkVersion === expectedNetwork 
       ? `Post a hack (on ${NETWORKS[props.networkVersion]})` 
       : `This only works on ${NETWORKS[3]}, please change your Network and refresh the page.`
-      : `You need metamask to post a hack.`
+      : `You're not connected`
       }
     </div>
   );
