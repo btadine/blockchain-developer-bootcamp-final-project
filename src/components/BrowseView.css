@@ -19,8 +19,10 @@
 
 .headerTitle {
   color: white;
+  display: flex;
+  justify-content: center;
 }
 
 .headerContainer {
-  padding-top: 30px;
+  padding-top: 50px;
 }

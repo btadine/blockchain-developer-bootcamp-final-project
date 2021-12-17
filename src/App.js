@@ -5,6 +5,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import abi from './utils/CityHacks.json';
 
 import Popup from 'reactjs-popup';
+import Moment from 'moment';
 import TabComponent from './components/Tabs.js';
 import PostView from './components/PostView.js';
 import BrowseView from './components/BrowseView.js';
@@ -157,7 +158,7 @@ const App = () => {
           hacksCleaned.push({
             id: hack.id.toNumber(),
             address: hack.owner,
-            timestamp: new Date(hack.timestamp * 1000),
+            timestamp: Moment(new Date(hack.timestamp * 1000)).format('LLL'),
             description: hack.description,
             city: cities[hack.cityId.toNumber()],
             category: categories[hack.categoryId.toNumber()],
@@ -299,10 +300,6 @@ const handleTip = (hackId) => {
     getAllHacks();
   }, [filters])
 
-function changebackground(){
-    document.body.style.backgroundColor = 'black';
-  }
-
 const setFiltersAndReload = (filters) => {
   setFilters(filters);
 }
@@ -363,13 +360,15 @@ const closePopup = () => {
   return (
     <div className="fullPage">
     <PostHackPopup 
+    destroyOnClose={true}
     visible={openPostPopup} 
-    closePopup={closePopup}/>
+    closePopup={closePopup}
+    postHack={postHack}
+    getAllHacks={getAllHacks}/>
     <div className="banner">
             <PostView metamask={window.ethereum !== undefined} 
         networkVersion={window.ethereum !== undefined ? window.ethereum.networkVersion : 'none' } postHack={postHack} getAllHacks={getAllHacks} connectWallet={connectWallet} accountNotFound={!currentAccount} openPostView={openPopup} closePopup={closePopup} />
     </div>
-      {changebackground()}
     <div className="mainContainer">
       <Popup open={errorOcurred}
        onClose={resetError}
@@ -400,11 +399,11 @@ const closePopup = () => {
   </Popup>
       <div className="dataContainer">
         <div className="header">
-        <div className="headerTitle"><span role="img" aria-label="City emoji">🏙️</span> Cityhacks</div>
+        <div className="headerTitle"><h2 className="headerTitle"><span className="cityIcon" role="img" aria-label="City emoji">🏙️</span>Cityhacks</h2></div>
         </div>
-
+        <h2 className="headerTitle2">Your decentralized city guide.</h2>
         <div className="description">
-<b>Your decentralized city guide.</b><br></br><br></br>Go ahead and discover <b>the cool stuff</b> happening in your city!
+<h3 className="headerTitle3">Discover <b>the cool stuff</b> happening in your city!</h3>
         </div>
         <BrowseView hacks={allHacks} getAllHacks={getAllHacks} fetchEvents={fetchEvents} voteHack={voteHack} handleTip={handleTip} votedHacks={votedHacks} setFilters={setFiltersAndReload}/>
       </div>

@@ -95,7 +95,6 @@ const functions = () => {
   
   return (
     <div>
-    <div className="headerTitle"><h4>Browse recommendations</h4></div>
     <div className="selectorsContainer">
       <Form layout="inline" size="small">
       <Form.Item>
@@ -134,11 +133,11 @@ const functions = () => {
         {props.hacks.map((hack, index) => {
           return (
             <div className="cityHack" key={index} style={{ backgroundColor: "#282828", marginTop: "16px", padding: "8px", borderRadius: 10 + 'px' }}>
+                                                     <div className="cityhackfield"><b>City:</b> {hack.city}</div>
+                                       <div className="cityhackfield"><b>Category:</b> {hack.category}</div>
+             <div className="cityhackfield"><b>Description:</b> {hack.description}</div>
+                                                       <div className="cityhackfield"><b>Time:</b> {hack.timestamp.toString()}</div>
               <div className="cityhackfield"><b>Address: </b>{hack.address}</div>
-              <div className="cityhackfield"><b>Time:</b> {hack.timestamp.toString()}</div>
-              <div className="cityhackfield"><b>Description:</b> {hack.description}</div>
-              <div className="cityhackfield"><b>City:</b> {hack.city}</div>
-              <div className="cityhackfield"><b>Category:</b> {hack.category}</div>
               <div className="actionsContainer">
                   <Button className="tipButton" variant="outline-secondary" id="button-addon2" onClick={()=> props.handleTip(hack.id)}>
                   Tip

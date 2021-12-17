@@ -16,9 +16,11 @@ const PostHackPopup = (props) => {
     const [textValue, setTextValue] = useState("");
     const [cityId, setCityId] = useState(0);
     const [categoryId, setCategoryId] = useState(0);
+    const [loadingPost, setLoadingPost] = useState(false);
+    const [postButtonTitle, setPostButtonTitle] = useState("Post");
 
       const cities = [
-  "All Cities",
+  "Select a City",
   "Barcelona",
   "Buenos Aires",
   "Lisbon",
@@ -33,7 +35,7 @@ const PostHackPopup = (props) => {
   "Athens"];
 
   const categories = [
-  "All categories",
+  "Select a Category",
   "Cheap Places",
   "Nice Spots",
   "Traditional",
@@ -42,34 +44,44 @@ const PostHackPopup = (props) => {
   "Misc"
   ];
 
-  const handleOk = () => {
-    this.setState({ loading: true });
-    setTimeout(() => {
-      this.setState({ loading: false, visible: false });
-    }, 3000);
-  };
+  const postHack = async () => {
+    setLoadingPost(true)
+    setPostButtonTitle("Posting")
+    console.log(textValue, cityId, categoryId)
+    await props.postHack(textValue, cityId, categoryId);
+    setLoadingPost(false);
+    setPostButtonTitle("Success")
+    props.getAllHacks();
+  }
 
-  const handleCancel = () => {
-    this.setState({ visible: false });
-  };
+  const closePopup = () => {
+    setTextValue("");
+    setCityId(0);
+    setCategoryId(0);
+    props.closePopup()
+    setPostButtonTitle("Post")
+  }
+
+  useEffect(() => {
+  const timer = setTimeout(() => {
+    if (!loadingPost) {
+      closePopup()
+    }
+  }, 1000);
+  return () => clearTimeout(timer);
+  },[postButtonTitle])
+
+  
+
     return (
       <Modal className="hackPopup" destroyOnClose="true" visible={props.visible}
-      position="right center" onCancel={props.closePopup}
+      position="right center" onCancel={closePopup}
                footer={[
-            <Button key="back" onClick={props.closePopup}>
-              Return
+            <Button key="back" disabled={loadingPost} onClick={closePopup}>
+              Cancel
             </Button>,
-            <Button key="submit" type="primary" loading={true} onClick={props.closePopup}>
-              Submit
-            </Button>,
-            <Button
-              key="link"
-              href="https://google.com"
-              type="primary"
-              loading={true}
-              onClick={props.closePopup}
-            >
-              Search on Google
+            <Button key="submit" type="primary" loading={loadingPost} onClick={postHack}>
+              {postButtonTitle}
             </Button>,
           ]}>
        {
@@ -78,9 +90,9 @@ const PostHackPopup = (props) => {
         <div className="content">
           {' '}
           Select a city, a category and enter a description of your cityhack.
-          <Form layout="inline" size="middle">
+          <Form className="selectHolder" layout="inline" size="middle">
       <Form.Item style={{width : '40%'}}>
-        <Select className="Select" style={{ margin : "0px" }} value={cityId} aria-label="Default select example" onChange={(e) => setCityId(e)}>
+        <Select className="Select" style={{ margin : "0px" }} value={cityId} aria-label="Default select example" disabled={loadingPost} onChange={(e) => setCityId(e)}>
         {cities.map((city, index) => {
           return (
             <Select.Option key={'city'+index} value={index}>{city}</Select.Option>);
@@ -88,7 +100,7 @@ const PostHackPopup = (props) => {
 </Select>
 </Form.Item>
 <Form.Item style={{width : '40%'}}>
-        <Select className="Select" style={{ margin : "0px" }} value={categoryId} disabled={cityId === 0} aria-label="Default select example" onChange={(e) =>
+        <Select className="Select" style={{ margin : "0px" }} value={categoryId} disabled={loadingPost} aria-label="Default select example" onChange={(e) =>
          setCategoryId(e)}>
         {categories.map((category, index) => {
           return (
@@ -96,20 +108,12 @@ const PostHackPopup = (props) => {
         })}
 </Select>
 </Form.Item>
-      <Form.Item className="descriptionBox" style={{width : '100%'}} label="Description">
-        <Input style={{height: 120}} rows={4} autoSize={{ minRows: 2, maxRows: 4 }} showCount maxLength={100}  placeholder="ie. cheap beers, a nice view spot, hipster coffee place" />
+      <Form.Item className="descriptionBox" style={{width : '100%'}} label="">
+        <Input disabled={loadingPost} style={{height: '76px', minHeight: '76px', maxHeight: '120px', overflowY: 'hidden', resize: 'none'}}
+        onChange={(e) => setTextValue(e.target.value)}
+  placeholder="ie. cheap beers, a nice view spot, hipster coffee place" />
       </Form.Item>
     </Form>
-        </div>
-        <div className="actions">
-          <button
-            className="button"
-            onClick={() => {
-              console.log('modal closed ');
-            }}
-          >
-            Okay
-          </button>
         </div>
       </div>
     }
