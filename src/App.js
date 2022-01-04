@@ -209,14 +209,10 @@ const App = () => {
 
   const getAllHacks = async () => {
     try {
-      const newProvider = new ethers.providers.AlchemyProvider(
-        'ropsten',
-        alchemyKey
-      );
       const cityHacksContract = new ethers.Contract(
         contractAddress,
         contractABI,
-        newProvider
+        provider
       );
 
       const hacks = await cityHacksContract.getAllHacks();
