@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 
 import 'antd/dist/antd.css';
 
-import './PostHackPopup.css';
+import './ReportedViewPopup.css';
 
 import { Form, Input, Button, Select, Modal } from 'antd';
 
-const PostHackPopup = (props) => {
+const ReportedViewPopup = (props) => {
   const [textValue, setTextValue] = useState('');
   const [cityId, setCityId] = useState(0);
   const [categoryId, setCategoryId] = useState(0);
@@ -156,4 +156,4 @@ const PostHackPopup = (props) => {
   );
 };
 
-export default PostHackPopup;
+export default ReportedViewPopup;

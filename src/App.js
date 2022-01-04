@@ -10,6 +10,7 @@ import TabComponent from './components/Tabs.js';
 import PostView from './components/PostView.js';
 import BrowseView from './components/BrowseView.js';
 import PostHackPopup from './components/PostHackPopup.js';
+import ReportedViewPopup from './components/ReportedViewPopup.js';
 
 import 'reactjs-popup/dist/index.css';
 import './App.css';
@@ -18,6 +19,7 @@ require('dotenv').config();
 
 const App = () => {
   const [allHacks, setAllHacks] = useState([]);
+  const [reportedHacks, setReportedHacks] = useState([]);
   const [currentAccount, setCurrentAccount] = useState('');
   const [connection, setConnection] = useState(false);
   const [provider, setProvider] = useState({});
@@ -29,6 +31,7 @@ const App = () => {
   const [votedHacks, setVotedHacks] = useState([]);
   const [filters, setFilters] = useState({});
   const [openPostPopup, setOpenPostPopup] = useState(false);
+  const [openReportedView, setOpenReportedView] = useState(false);
   const [walletIsOwner, setWalletIsOwner] = useState(false);
 
   const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
@@ -167,6 +170,41 @@ const App = () => {
     //} catch (error) {
     //  console.log(error)
     //}
+  };
+
+  const getReportedHacks = async () => {
+    try {
+      const newProvider = new ethers.providers.AlchemyProvider(
+        'ropsten',
+        alchemyKey
+      );
+      const cityHacksContract = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        newProvider
+      );
+
+      const hacksIds = await cityHacksContract.getReportedHacks();
+
+      const hacks = allHacks.filter((a) => hacksIds.includes(a.id));
+
+      let hacksCleaned = [];
+      hacks.forEach((hack) => {
+        hacksCleaned.push({
+          id: hack.id.toNumber(),
+          address: hack.owner,
+          timestamp: Moment(new Date(hack.timestamp * 1000)).format('LLL'),
+          description: hack.description,
+          city: cities[hack.cityId.toNumber()],
+          category: categories[hack.categoryId.toNumber()],
+          upvotes: hack.totalUpvotes.toNumber(),
+          downvotes: hack.totalDownvotes.toNumber(),
+        });
+      });
+      setReportedHacks(hacksCleaned);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const getAllHacks = async () => {
@@ -382,6 +420,10 @@ const App = () => {
     getAllHacks();
   }, [filters]);
 
+  useEffect(() => {
+    setOpenReportedView(reportedHacks.length > 0);
+  }, [reportedHacks]);
+
   const setFiltersAndReload = (filters) => {
     setFilters(filters);
   };
@@ -394,6 +436,15 @@ const App = () => {
   const closePopup = () => {
     console.log('closing popup');
     setOpenPostPopup(false);
+  };
+
+  const openReported = () => {
+    console.log('opening reported');
+    getReportedHacks();
+  };
+
+  const closeReported = () => {
+    setOpenReportedView(false);
   };
 
   const fix = () => {
@@ -448,6 +499,12 @@ const App = () => {
         postHack={postHack}
         getAllHacks={getAllHacks}
       />
+      <ReportedViewPopup
+        destroyOnClose={true}
+        visible={openReportedView}
+        closePopup={closeReported}
+        reportedHacks={reportedHacks}
+      />
       <div className="banner">
         <PostView
           metamask={window.ethereum !== undefined}
@@ -461,6 +518,7 @@ const App = () => {
           connectWallet={connectWallet}
           accountNotFound={!currentAccount}
           openPostView={openPopup}
+          openReportedView={openReported}
           closePopup={closePopup}
           isOwner={walletIsOwner}
         />

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import Poll from './Poll.js';
 //import { Button, FormSelect } from 'react-bootstrap';
 import './BrowseView.css';
 import Loader from 'react-loader-spinner';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import 'antd/dist/antd.css';
+
+import CityHack from './CityHack.js';
 
 import { Form, Input, Button, Select } from 'antd';
 
@@ -165,61 +166,13 @@ const BrowseView = (props) => {
             )}
             {props.hacks.map((hack, index) => {
               return (
-                <div
-                  className="cityHack"
-                  key={index}
-                  style={{
-                    backgroundColor: '#282828',
-                    marginTop: '16px',
-                    padding: '8px',
-                    borderRadius: 10 + 'px',
-                  }}
-                >
-                  <div className="cityhackfield">
-                    <b>City:</b> {hack.city}
-                  </div>
-                  <div className="cityhackfield">
-                    <b>Category:</b> {hack.category}
-                  </div>
-                  <div className="cityhackfield">
-                    <b>Description:</b> {hack.description}
-                  </div>
-                  <div className="cityhackfield">
-                    <b>Time:</b> {hack.timestamp.toString()}
-                  </div>
-                  <div className="cityhackfield">
-                    <b>Address: </b>
-                    {hack.address}
-                  </div>
-                  <div className="actionsContainer">
-                    <Button
-                      className="tipButton"
-                      variant="outline-secondary"
-                      id="button-addon2"
-                      onClick={() => props.handleTip(hack.id)}
-                    >
-                      Tip
-                    </Button>
-                    <Button
-                      className="tipButton"
-                      variant="outline-secondary"
-                      id="button-addon2"
-                      onClick={() => props.handleReport(hack.id)}
-                    >
-                      Report
-                    </Button>
-                    <div className="poll">
-                      <Poll
-                        hackId={hack.id}
-                        onVote={handleVote}
-                        upVotes={hack.upvotes}
-                        downVotes={hack.downvotes}
-                        hackIdsVotes={hackIdsVotes}
-                        hackIdsVoted={hackIdsVoted}
-                      />
-                    </div>
-                  </div>
-                </div>
+                <CityHack
+                  hack={hack}
+                  hackIdsVoted={hackIdsVoted}
+                  hackIdsVotes={hackIdsVotes}
+                  handleVote={handleVote}
+                  index={index}
+                />
               );
             })}
           </div>
