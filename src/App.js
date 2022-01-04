@@ -14,6 +14,8 @@ import PostHackPopup from './components/PostHackPopup.js'
 import 'reactjs-popup/dist/index.css';
 import './App.css';
 
+require('dotenv').config();
+
 const App = () => {
     const [allHacks, setAllHacks] = useState([]);
     const [currentAccount, setCurrentAccount] = useState("");
@@ -27,8 +29,9 @@ const App = () => {
     const [votedHacks, setVotedHacks] = useState([]);
     const [filters, setFilters] = useState({});
     const [openPostPopup, setOpenPostPopup] = useState(false);
+    const [walletIsOwner, setWalletIsOwner] = useState(false);
 
-  const alchemyKey = "WQdePxSH5rFBaHe6TVIrlm6Xts-YZtT3";
+  const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY
   const cities = [
   "Choose a city",
   "Barcelona",
@@ -54,7 +57,7 @@ const App = () => {
   "Misc"
   ];
 
-  const contractAddress = "0xB7b5b872948Ee07E6b7e43A935E600Cd79E8799E";
+  const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS
   const contractABI = abi.abi;
 
   async function getWeb3Modal() {
@@ -65,7 +68,7 @@ const App = () => {
           walletconnect: {
             package: WalletConnectProvider,
             options: {
-              infuraId: '986b52d1f39e41b1aabbd6be520163a5'
+              infuraId: process.env.REACT_APP_INFURA_ID
             },
           },
         },
@@ -126,8 +129,20 @@ const App = () => {
     }
   }
 
+  const configWalletIsOwner = (account) => {
+    try {
+      const newProvider = new ethers.providers.AlchemyProvider("ropsten", alchemyKey);   
+      const cityHacksContract = new ethers.Contract(contractAddress, contractABI, newProvider);
+      const owner = await cityHacksContract.owner;
+      setWalletIsOwner(owner == account);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
   const connectWallet = async () => {
     connect();
+    configWalletIsOwner();
     //try {
       //const { ethereum } = window;
 
@@ -367,7 +382,7 @@ const closePopup = () => {
     getAllHacks={getAllHacks}/>
     <div className="banner">
             <PostView metamask={window.ethereum !== undefined} 
-        networkVersion={window.ethereum !== undefined ? window.ethereum.networkVersion : 'none' } postHack={postHack} getAllHacks={getAllHacks} connectWallet={connectWallet} accountNotFound={!currentAccount} openPostView={openPopup} closePopup={closePopup} />
+        networkVersion={window.ethereum !== undefined ? window.ethereum.networkVersion : 'none' } postHack={postHack} getAllHacks={getAllHacks} connectWallet={connectWallet} accountNotFound={!currentAccount} openPostView={openPopup} closePopup={closePopup} isOwner={walletIsOwner} />
     </div>
     <div className="mainContainer">
       <Popup open={errorOcurred}
