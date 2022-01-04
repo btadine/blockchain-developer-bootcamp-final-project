@@ -90,7 +90,7 @@ const PostView = (props) => {
           </div>
         ) :
 (<div className="postHackContainer">
-<div className="connected">{isOwner ? "You're Admin" : "You're connected" }</div>
+<div className="connected">{props.isOwner ? "You're Admin" : "You're connected" }</div>
 <div className="connectWalletContainer">
           <Button className="connectWalletButton" onClick={props.openPostView}>
             Post a hack

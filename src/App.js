@@ -129,7 +129,7 @@ const App = () => {
     }
   }
 
-  const configWalletIsOwner = (account) => {
+  const configWalletIsOwner = async (account) => {
     try {
       const newProvider = new ethers.providers.AlchemyProvider("ropsten", alchemyKey);   
       const cityHacksContract = new ethers.Contract(contractAddress, contractABI, newProvider);
