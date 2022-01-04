@@ -98,7 +98,7 @@ const App = () => {
       }
       const web3Modal = await getWeb3Modal();
       if (web3Modal.cachedProvider) {
-        connect();
+        connectWallet();
       }
       
       //const accounts = await ethereum.request({ method: 'eth_accounts' });
@@ -133,7 +133,8 @@ const App = () => {
     try {
       const newProvider = new ethers.providers.AlchemyProvider("ropsten", alchemyKey);   
       const cityHacksContract = new ethers.Contract(contractAddress, contractABI, newProvider);
-      const owner = await cityHacksContract.owner;
+      const owner = await cityHacksContract.owner();
+      console.log("Owner", owner, account);
       setWalletIsOwner(owner == account);
   } catch (error) {
     console.log(error);
@@ -141,8 +142,8 @@ const App = () => {
 }
 
   const connectWallet = async () => {
-    connect();
-    configWalletIsOwner();
+    console.log("function called")
+    await connect();
     //try {
       //const { ethereum } = window;
 
@@ -310,6 +311,10 @@ const handleTip = (hackId) => {
     getAllHacks();
     checkIfWalletIsConnected();
   }, [])
+
+  useEffect(() => {
+    configWalletIsOwner(currentAccount);
+  }, [currentAccount])
 
   useEffect(() => {
     getAllHacks();
