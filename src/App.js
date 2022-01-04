@@ -174,14 +174,10 @@ const App = () => {
 
   const getReportedHacks = async () => {
     try {
-      const newProvider = new ethers.providers.AlchemyProvider(
-        'ropsten',
-        alchemyKey
-      );
       const cityHacksContract = new ethers.Contract(
         contractAddress,
         contractABI,
-        newProvider
+        provider
       );
 
       const hacksIds = await cityHacksContract.getReportedHacks();
@@ -209,10 +205,14 @@ const App = () => {
 
   const getAllHacks = async () => {
     try {
+      const newProvider = new ethers.providers.AlchemyProvider(
+        'ropsten',
+        alchemyKey
+      );
       const cityHacksContract = new ethers.Contract(
         contractAddress,
         contractABI,
-        provider
+        newProvider
       );
 
       const hacks = await cityHacksContract.getAllHacks();
