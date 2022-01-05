@@ -171,6 +171,7 @@ const BrowseView = (props) => {
                   hackIdsVoted={hackIdsVoted}
                   hackIdsVotes={hackIdsVotes}
                   handleVote={handleVote}
+                  handleReport={props.handleReport}
                   index={index}
                 />
               );

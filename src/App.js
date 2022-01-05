@@ -174,30 +174,20 @@ const App = () => {
 
   const getReportedHacks = async () => {
     try {
+      const signer = provider.getSigner();
       const cityHacksContract = new ethers.Contract(
         contractAddress,
         contractABI,
-        provider
+        signer
       );
-
-      const hacksIds = await cityHacksContract.getReportedHacks();
-
+      const owner = await cityHacksContract.owner();
+      console.log('Contract owner is', owner);
+      let hacksIds = await cityHacksContract.getReportedHacks();
+      hacksIds = hacksIds.map((bigNumber) => bigNumber.toNumber());
+      console.log(hacksIds);
       const hacks = allHacks.filter((a) => hacksIds.includes(a.id));
-
-      let hacksCleaned = [];
-      hacks.forEach((hack) => {
-        hacksCleaned.push({
-          id: hack.id.toNumber(),
-          address: hack.owner,
-          timestamp: Moment(new Date(hack.timestamp * 1000)).format('LLL'),
-          description: hack.description,
-          city: cities[hack.cityId.toNumber()],
-          category: categories[hack.categoryId.toNumber()],
-          upvotes: hack.totalUpvotes.toNumber(),
-          downvotes: hack.totalDownvotes.toNumber(),
-        });
-      });
-      setReportedHacks(hacksCleaned);
+      console.log(hacks);
+      setReportedHacks(hacks);
     } catch (error) {
       console.log(error);
     }
@@ -434,8 +424,9 @@ const App = () => {
     setOpenPostPopup(false);
   };
 
-  const openReported = () => {
+  const openReported = async () => {
     console.log('opening reported');
+    console.log(await provider.listAccounts());
     getReportedHacks();
   };
 
