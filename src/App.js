@@ -128,7 +128,7 @@ const App = () => {
     console.log('Setting account', account);
     if (this.setState !== undefined) {
       this.setState({ currentAccount: account }, () => {
-        fetchEvents();
+        fetchVotes();
       });
     }
   };
@@ -172,26 +172,26 @@ const App = () => {
     //}
   };
 
-  const getReportedHacks = async () => {
-    try {
-      const signer = provider.getSigner();
-      const cityHacksContract = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        signer
-      );
-      const owner = await cityHacksContract.owner();
-      console.log('Contract owner is', owner);
-      let hacksIds = await cityHacksContract.getReportedHacks();
-      hacksIds = hacksIds.map((bigNumber) => bigNumber.toNumber());
-      console.log(hacksIds);
-      const hacks = allHacks.filter((a) => hacksIds.includes(a.id));
-      console.log(hacks);
-      setReportedHacks(hacks);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getReportedHacks = async () => {
+  //   try {
+  //     const signer = provider.getSigner();
+  //     const cityHacksContract = new ethers.Contract(
+  //       contractAddress,
+  //       contractABI,
+  //       signer
+  //     );
+  //     const owner = await cityHacksContract.owner();
+  //     console.log('Contract owner is', owner);
+  //     let hacksIds = await cityHacksContract.getReportedHacks();
+  //     hacksIds = hacksIds.map((bigNumber) => bigNumber.toNumber());
+  //     console.log(hacksIds);
+  //     const hacks = allHacks.filter((a) => hacksIds.includes(a.id));
+  //     console.log(hacks);
+  //     setReportedHacks(hacks);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const getAllHacks = async () => {
     try {
@@ -209,16 +209,18 @@ const App = () => {
 
       let hacksCleaned = [];
       hacks.forEach((hack) => {
-        hacksCleaned.push({
-          id: hack.id.toNumber(),
-          address: hack.owner,
-          timestamp: Moment(new Date(hack.timestamp * 1000)).format('LLL'),
-          description: hack.description,
-          city: cities[hack.cityId.toNumber()],
-          category: categories[hack.categoryId.toNumber()],
-          upvotes: hack.totalUpvotes.toNumber(),
-          downvotes: hack.totalDownvotes.toNumber(),
-        });
+        if (!hack.hidden) {
+          hacksCleaned.push({
+            id: hack.id.toNumber(),
+            address: hack.owner,
+            timestamp: Moment(new Date(hack.timestamp * 1000)).format('LLL'),
+            description: hack.description,
+            city: cities[hack.cityId.toNumber()],
+            category: categories[hack.categoryId.toNumber()],
+            upvotes: hack.totalUpvotes.toNumber(),
+            downvotes: hack.totalDownvotes.toNumber(),
+          });
+        }
       });
 
       let hacksFiltered = [];
@@ -241,7 +243,59 @@ const App = () => {
     }
   };
 
-  const getAllEvents = async (account) => {
+  const getAllReportedHacks = async (account) => {
+    try {
+      const newProvider = new ethers.providers.AlchemyProvider(
+        'ropsten',
+        alchemyKey
+      );
+
+      const signer = provider.getSigner();
+      const ens = new ethers.Contract(contractAddress, contractABI, signer);
+
+      let latestBlockReport = await ens.getLatestReportBlock();
+      latestBlockReport = latestBlockReport.toNumber();
+
+      //let ens = new ethers.Contract(contractAddress, contractABI, newProvider);
+
+      const query = await ens.queryFilter(
+        ens.filters.TrustReport(
+          null,
+          null,
+          null,
+          latestBlockReport,
+          null,
+          null
+        ),
+        provider.getBlockNumber().then((b) => b - 10000),
+        'latest'
+      );
+
+      const reported = query
+        .map((event, index) => {
+          return event.args[5].map((n) => n.toNumber());
+        })
+        .flat();
+
+      return reported;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getAndSetReportedHacks = async (account) => {
+    try {
+      const reported = await getAllReportedHacks(account);
+      console.log(reported);
+      const hacks = allHacks.filter((a) => reported.includes(a.id));
+      console.log(hacks);
+      setReportedHacks(hacks);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getAllVotes = async (account) => {
     try {
       const newProvider = new ethers.providers.AlchemyProvider(
         'ropsten',
@@ -282,9 +336,10 @@ const App = () => {
     }
   };
 
-  const reportHack = async (hackId) => {
+  const unreportHack = async (hackId) => {
     try {
       //const provider = new ethers.providers.Web3Provider(connection);
+      let reported = await getAllReportedHacks();
       const signer = provider.getSigner();
       const cityHacksContract = new ethers.Contract(
         contractAddress,
@@ -292,7 +347,69 @@ const App = () => {
         signer
       );
 
-      const reportHackTxn = await cityHacksContract.reportHack(hackId);
+      reported = reported.filter((e) => e != hackId);
+      console.log('Unreported', reported, 'hackId:', hackId);
+
+      const reportHackTxn = await cityHacksContract.unreportHack(
+        hackId,
+        reported
+      );
+      // Mining, insert an animation to inform user.
+
+      await reportHackTxn.wait();
+      // Txn mined
+    } catch (error) {
+      setErrorOcurred(true);
+      console.log(error);
+    }
+  };
+
+  const hideCityHack = async (hackId) => {
+    try {
+      //const provider = new ethers.providers.Web3Provider(connection);
+      let reported = await getAllReportedHacks();
+      const signer = provider.getSigner();
+      const cityHacksContract = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        signer
+      );
+
+      reported = reported.filter((e) => e != hackId);
+
+      const hideHackTxn = await cityHacksContract.hideAndUnreportHack(
+        hackId,
+        reported
+      );
+      // Mining, insert an animation to inform user.
+
+      await hideHackTxn.wait();
+      // Txn mined
+    } catch (error) {
+      setErrorOcurred(true);
+      console.log(error);
+    }
+  };
+
+  const reportHack = async (hackId) => {
+    try {
+      //const provider = new ethers.providers.Web3Provider(connection);
+      let reported = await getAllReportedHacks();
+      const signer = provider.getSigner();
+      const cityHacksContract = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        signer
+      );
+
+      reported.push(hackId);
+
+      console.log('HEYYYY', hackId, reported);
+
+      const reportHackTxn = await cityHacksContract.reportHack(
+        hackId,
+        reported
+      );
       // Mining, insert an animation to inform user.
 
       await reportHackTxn.wait();
@@ -385,12 +502,22 @@ const App = () => {
     reportHack(hackId);
   };
 
+  const handleUnReport = (hackId) => {
+    unreportHack(hackId);
+  };
+
+  const handleHide = async (hackId) => {
+    await hideCityHack(hackId);
+    setOpenReportedView(false);
+    getAllHacks();
+  };
+
   const setTip = (event) => {
     setTipValue(event.target.value);
   };
 
-  const fetchEvents = () => {
-    getAllEvents(currentAccount);
+  const fetchVotes = () => {
+    getAllVotes(currentAccount);
   };
 
   useEffect(() => {
@@ -427,7 +554,7 @@ const App = () => {
   const openReported = async () => {
     console.log('opening reported');
     console.log(await provider.listAccounts());
-    getReportedHacks();
+    getAndSetReportedHacks();
   };
 
   const closeReported = () => {
@@ -491,6 +618,8 @@ const App = () => {
         visible={openReportedView}
         closePopup={closeReported}
         reportedHacks={reportedHacks}
+        handleUnReport={handleUnReport}
+        handleHide={handleHide}
       />
       <div className="banner">
         <PostView
@@ -557,7 +686,7 @@ const App = () => {
           <BrowseView
             hacks={allHacks}
             getAllHacks={getAllHacks}
-            fetchEvents={fetchEvents}
+            fetchEvents={fetchVotes}
             voteHack={voteHack}
             handleTip={handleTip}
             handleReport={handleReport}

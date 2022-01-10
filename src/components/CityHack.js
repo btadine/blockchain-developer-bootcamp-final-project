@@ -8,7 +8,6 @@ const CityHack = (props) => {
   return (
     <div
       className="cityHack"
-      key={props.index}
       style={{
         backgroundColor: '#282828',
         marginTop: '16px',
@@ -32,34 +31,56 @@ const CityHack = (props) => {
         <b>Address: </b>
         {props.hack.address}
       </div>
-      <div className="actionsContainer">
-        <Button
-          className="tipButton"
-          variant="outline-secondary"
-          id="button-addon2"
-          onClick={() => props.handleTip(props.hack.id)}
-        >
-          Tip
-        </Button>
-        <Button
-          className="tipButton"
-          variant="outline-secondary"
-          id="button-addon2"
-          onClick={() => props.handleReport(props.hack.id)}
-        >
-          Report
-        </Button>
-        <div className="poll">
-          <Poll
-            hackId={props.hack.id}
-            onVote={props.handleVote}
-            upVotes={props.hack.upvotes}
-            downVotes={props.hack.downvotes}
-            hackIdsVotes={props.hackIdsVotes}
-            hackIdsVoted={props.hackIdsVoted}
-          />
+      {!props.reportedView && (
+        <div className="actionsContainer">
+          <Button
+            className="tipButton"
+            variant="outline-secondary"
+            id="button-addon2"
+            onClick={() => props.handleTip(props.hack.id)}
+          >
+            Tip
+          </Button>
+          <Button
+            className="tipButton"
+            variant="outline-secondary"
+            id="button-addon2"
+            onClick={() => props.handleReport(props.hack.id)}
+          >
+            Report
+          </Button>
+          <div className="poll">
+            <Poll
+              hackId={props.hack.id}
+              onVote={props.handleVote}
+              upVotes={props.hack.upvotes}
+              downVotes={props.hack.downvotes}
+              hackIdsVotes={props.hackIdsVotes}
+              hackIdsVoted={props.hackIdsVoted}
+            />
+          </div>
         </div>
-      </div>
+      )}
+      {props.reportedView && (
+        <div className="actionsContainer">
+          <Button
+            className="tipButton"
+            variant="outline-secondary"
+            id="button-addon2"
+            onClick={() => props.handleUnReport(props.hack.id)}
+          >
+            Unreport
+          </Button>
+          <Button
+            className="tipButton"
+            variant="outline-secondary"
+            id="button-addon2"
+            onClick={() => props.handleHide(props.hack.id)}
+          >
+            Hide and Unreport
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

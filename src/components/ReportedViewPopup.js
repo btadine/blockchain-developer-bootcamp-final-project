@@ -5,6 +5,7 @@ import 'antd/dist/antd.css';
 import './ReportedViewPopup.css';
 
 import { Form, Input, Button, Select, Modal } from 'antd';
+import CityHack from './CityHack.js';
 
 const ReportedViewPopup = (props) => {
   const [textValue, setTextValue] = useState('');
@@ -89,66 +90,19 @@ const ReportedViewPopup = (props) => {
     >
       {
         <div className="modal">
-          <div className="header"> Post your cityhack </div>
+          <div className="header">Reported cityhacks</div>
           <div className="content">
-            {' '}
-            Select a city, a category and enter a description of your cityhack.
-            <Form className="selectHolder" layout="inline" size="middle">
-              <Form.Item style={{ width: '40%' }}>
-                <Select
-                  className="Select"
-                  style={{ margin: '0px' }}
-                  value={cityId}
-                  aria-label="Default select example"
-                  disabled={loadingPost}
-                  onChange={(e) => setCityId(e)}
-                >
-                  {cities.map((city, index) => {
-                    return (
-                      <Select.Option key={'city' + index} value={index}>
-                        {city}
-                      </Select.Option>
-                    );
-                  })}
-                </Select>
-              </Form.Item>
-              <Form.Item style={{ width: '40%' }}>
-                <Select
-                  className="Select"
-                  style={{ margin: '0px' }}
-                  value={categoryId}
-                  disabled={loadingPost}
-                  aria-label="Default select example"
-                  onChange={(e) => setCategoryId(e)}
-                >
-                  {categories.map((category, index) => {
-                    return (
-                      <Select.Option key={'category' + index} value={index}>
-                        {category}
-                      </Select.Option>
-                    );
-                  })}
-                </Select>
-              </Form.Item>
-              <Form.Item
-                className="descriptionBox"
-                style={{ width: '100%' }}
-                label=""
-              >
-                <Input
-                  disabled={loadingPost}
-                  style={{
-                    height: '76px',
-                    minHeight: '76px',
-                    maxHeight: '120px',
-                    overflowY: 'hidden',
-                    resize: 'none',
-                  }}
-                  onChange={(e) => setTextValue(e.target.value)}
-                  placeholder="ie. cheap beers, a nice view spot, hipster coffee place"
+            {props.reportedHacks.map((hack, index) => {
+              return (
+                <CityHack
+                  key={index}
+                  hack={hack}
+                  reportedView={true}
+                  handleUnReport={props.handleUnReport}
+                  handleHide={props.handleHide}
                 />
-              </Form.Item>
-            </Form>
+              );
+            })}
           </div>
         </div>
       }

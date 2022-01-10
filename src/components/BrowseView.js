@@ -167,12 +167,12 @@ const BrowseView = (props) => {
             {props.hacks.map((hack, index) => {
               return (
                 <CityHack
+                  key={index}
                   hack={hack}
                   hackIdsVoted={hackIdsVoted}
                   hackIdsVotes={hackIdsVotes}
                   handleVote={handleVote}
                   handleReport={props.handleReport}
-                  index={index}
                 />
               );
             })}
